@@ -81,6 +81,10 @@ npx tsc --noEmit       # tipos
 - **Verificar siempre en el navegador real con un build de producción**, no con el servidor de desarrollo: su optimizador de imágenes bajo demanda da falsos negativos (fotos en `[pending]` o pixeladas).
 - Limpiar ScrollTrigger, listeners y canvas al desmontar.
 
+## Repositorio
+
+`https://github.com/pedrohenryrodriguesvicente-dotcom/arista` — público, rama `main`, remoto `origin`. Pensado para importarse en Vercel sin configuración adicional: no hay variables de entorno.
+
 ## Pendientes conocidos
 
 - ⚠️ **ANTES DE DESPLEGAR**: sustituir el dominio marcador `https://arista.vercel.app` en `app/layout.tsx` (`SITIO`), `app/robots.ts` y `app/sitemap.ts`. Afecta a `metadataBase`, canonical, Open Graph, JSON-LD, `robots.txt` y `sitemap.xml`.
