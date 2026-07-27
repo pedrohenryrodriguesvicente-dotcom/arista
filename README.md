@@ -1,36 +1,106 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ARISTA
 
-## Getting Started
+Landing page de una sola página para una residencia unifamiliar de obra nueva
+en Benahavís (Marbella, Costa del Sol). El sitio está construido alrededor de
+una idea: la casa es una línea sobre la ladera, y esa línea se dibuja sola a
+medida que el visitante baja por la página.
 
-First, run the development server:
+En español de España.
+
+## Stack
+
+| | |
+|---|---|
+| Framework | Next.js 15 · App Router |
+| UI | React 19 · TypeScript |
+| Estilos | Tailwind CSS 4 (tokens en `@theme`) |
+| Animación | GSAP 3 · ScrollTrigger · SplitText |
+| Tipografía | Instrument Serif · Geist Sans (`next/font`) |
+
+## Características
+
+- **Diagrama de sección en SVG que se traza con el scroll.** El perfil del
+  terreno, las tres plataformas, las cotas y el eje de vista se dibujan con
+  `stroke-dashoffset` sincronizado al scroll (`pin` + `scrub`) en escritorio, y
+  de una pasada en móvil.
+- **Visor de fotografías a pantalla completa.** Diez imágenes ampliables: las
+  seis de la galería navegan entre sí con flechas, teclado y deslizamiento; las
+  cuatro sueltas (Entorno y los tres pilares) abren en modo de foto única. Cierre
+  por aspa, fondo, arrastre vertical y `Escape`, con el foco confinado y devuelto
+  al botón de origen.
+- **Animaciones que fallan mostrando.** El CSS base nunca oculta nada: los
+  estados iniciales se aplican solo desde JavaScript, y una salvaguarda con
+  `IntersectionObserver` revela el contenido si un disparador no llega a
+  ejecutarse. Verificado anulando el `requestAnimationFrame`: sin animación, las
+  once secciones se leen completas.
+- **Diseño responsive** verificado a 375, 414, 768, 1024 y 1440 px. En móvil la
+  galería empareja las fotografías verticales de dos en dos y los pilares
+  colocan fotografía y texto en la misma fila.
+- **Accesibilidad.** Recorrido completo por teclado, foco visible también sobre
+  los fondos oscuros, jerarquía de encabezados sin saltos, textos alternativos
+  reales y contraste AA medido sobre fotografía y sobre grafito.
+- **Rendimiento.** Las animaciones de las secciones bajo el pliegue se montan
+  después del primer pintado, para no bloquear el LCP.
+- **SEO y metadatos.** Open Graph, Twitter Card, datos estructurados JSON-LD
+  (`SingleFamilyResidence`), `robots.txt`, `sitemap.xml` y manifest de aplicación.
+
+## Lighthouse
+
+Medido sobre un build de producción servido en local (Lighthouse 12).
+
+| | Rendimiento | Accesibilidad | Buenas prácticas | SEO |
+|---|---|---|---|---|
+| Escritorio | 99 | 100 | 100 | 100 |
+| Móvil | 86 | 100 | 100 | 100 |
+
+Métricas web esenciales: **CLS 0** en ambos. LCP 1,0 s en escritorio y 3,8 s en
+móvil (emulación con CPU limitada 4×).
+
+## Instalación
+
+Requiere Node.js 18.18 o superior.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/pedrohenryrodriguesvicente-dotcom/arista.git
+cd arista
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+```bash
+npm run dev     # desarrollo en http://localhost:3000
+npm run build   # build de producción
+npm start       # sirve el build de producción
+npm run lint    # ESLint
+npx tsc --noEmit  # comprobación de tipos
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+El proyecto **no necesita ninguna variable de entorno**.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+> Al verificar, hazlo siempre contra un build de producción: el optimizador de
+> imágenes bajo demanda del servidor de desarrollo da falsos negativos.
 
-## Learn More
+## Estructura
 
-To learn more about Next.js, take a look at the following resources:
+```
+app/            Rutas, metadatos y la totalidad del CSS
+  layout.tsx      Metadatos, Open Graph, JSON-LD, fuentes, iconos
+  page.tsx        Orden de las once secciones
+  globals.css     Tokens de diseño (@theme) y todos los estilos
+  not-found.tsx   Página 404
+  error.tsx       Límite de error en tiempo de ejecución
+components/     Una sección por archivo, más header, pie y visor
+lib/            GSAP, salvaguarda de «fallar mostrando», bloqueo de scroll,
+                y los hooks de montaje de animaciones
+public/         Fotografías, Open Graph, favicons y manifest
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Despliegue
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Pensado para Vercel: se importa el repositorio y se despliega sin configuración
+adicional. Tras el primer despliegue hay que fijar el dominio definitivo en
+`app/layout.tsx`, `app/robots.ts` y `app/sitemap.ts`, donde ahora figura un
+marcador.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Diseño y desarrollo: **Vertex Web Design**
