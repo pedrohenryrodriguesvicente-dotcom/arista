@@ -2,13 +2,13 @@
 
 import { useRef } from "react";
 import { gsap, SplitText } from "@/lib/gsap";
-import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
+import { useAnimEffect } from "@/lib/use-anim-effect";
 import { afterFonts, armFailShowing } from "@/lib/anim";
 
 export default function Esencia() {
   const root = useRef<HTMLElement>(null);
 
-  useIsomorphicLayoutEffect(() => {
+  useAnimEffect(() => {
     const el = root.current;
     if (!el) return;
 

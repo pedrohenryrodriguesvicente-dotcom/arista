@@ -17,7 +17,6 @@
   /* Mismo tono (H 18,8°), aclarado para fondo OSCURO: el terracota base sólo
      da 3,3:1 sobre el grafito y no cumple AA. Éste da 4,93:1. */
   --color-terracota-claro: #bb7758;
-  --color-horizonte: #4a6b7c; /* acento azul, definido sin uso por ahora */
   --color-linea: rgba(26, 25, 23, 0.14); /* filete / hairline */
   --color-linea-fuerte: rgba(26, 25, 23, 0.32); /* divisor destacado */
   --color-arista: rgba(26, 25, 23, 0.32); /* la línea "arista" (seña de marca) */
@@ -36,14 +35,6 @@
   --text-nav: 0.6875rem; /* 11px — etiquetas de navegación */
   --text-nav--line-height: 1;
   --text-nav--letter-spacing: 0.18em;
-
-  --text-eyebrow: clamp(0.6875rem, 0.66rem + 0.14vw, 0.8125rem);
-  --text-eyebrow--line-height: 1.4;
-  --text-eyebrow--letter-spacing: 0.22em;
-
-  --text-data: clamp(0.6875rem, 0.66rem + 0.12vw, 0.78rem);
-  --text-data--line-height: 1.5;
-  --text-data--letter-spacing: 0.14em;
 
   --text-lede: clamp(1.0625rem, 1rem + 0.5vw, 1.3125rem);
   --text-lede--line-height: 1.55;
@@ -534,6 +525,19 @@ html[data-scroll-bloqueado="true"] .site-header {
 }
 
 /* ============================================================
+   Páginas de aviso (404 y límite de error)
+   ============================================================
+   Sin cabecera ni pie: son callejones sin salida, y el único camino que deben
+   ofrecer es volver al inicio. Se centran verticalmente y dejan el mismo aire
+   lateral que el resto del sitio. */
+.pagina-aviso {
+  display: flex;
+  align-items: center;
+  min-height: 100svh;
+  padding-block: var(--space-section);
+}
+
+/* ============================================================
    Hero
    ============================================================ */
 
@@ -651,16 +655,21 @@ html[data-scroll-bloqueado="true"] .site-header {
 }
 
 /* --- Indicador de scroll del hero ------------------------------
-   Filete vertical de 1px con un segmento opaco que lo recorre de arriba
-   abajo en bucle lento: sugiere el descenso sin gritarlo. Sólo transform.
-   Se desvanece en cuanto el usuario baja y no vuelve. */
+   Filete vertical con un segmento opaco que lo recorre de arriba abajo en
+   bucle lento: sugiere el descenso sin gritarlo. Sólo transform.
+   Se desvanece en cuanto el usuario baja y no vuelve.
+
+   CONTRASTE. El carril pasa de 0,32 a 0,50 de negro (≈3,1:1 sobre blanco) y
+   el segmento se queda en grafito pleno (≈15,9:1): la diferencia carril /
+   segmento es lo que hace legible el recorrido de un vistazo. El carril no
+   sube más porque compite con el filete «arista», que es seña de marca. */
 .hero-scroll {
   position: relative;
   display: block;
   width: 1px;
-  height: 40px;
-  margin-top: 28px;
-  background-color: var(--color-arista);
+  height: 80px;
+  margin-top: 20px;
+  background-color: rgba(26, 25, 23, 0.5);
   overflow: hidden;
   opacity: 1;
   transition: opacity 0.5s ease;
@@ -673,21 +682,23 @@ html[data-scroll-bloqueado="true"] .site-header {
   left: 0;
   top: 0;
   width: 1px;
-  height: 13px;
+  height: 28px;
   background-color: var(--color-grafito);
-  transform: translateY(-13px);
-  animation: hero-scroll-desliza 2.9s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  transform: translateY(-28px);
+  /* 4,2 s: el segmento es más largo y el recorrido el doble, así que el
+     ciclo se alarga para conservar la misma cadencia pausada de antes. */
+  animation: hero-scroll-desliza 4.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
   will-change: transform;
 }
 @keyframes hero-scroll-desliza {
   0% {
-    transform: translateY(-13px);
+    transform: translateY(-28px);
   }
   55% {
-    transform: translateY(40px);
+    transform: translateY(80px);
   }
   100% {
-    transform: translateY(40px);
+    transform: translateY(80px);
   }
 }
 /* Sin movimiento: el segmento se queda centrado y quieto (la regla global de
@@ -695,7 +706,7 @@ html[data-scroll-bloqueado="true"] .site-header {
 @media (prefers-reduced-motion: reduce) {
   .hero-scroll-seg {
     animation: none !important;
-    transform: translateY(13px);
+    transform: translateY(26px);
   }
 }
 
@@ -1103,13 +1114,140 @@ html[data-scroll-bloqueado="true"] .site-header {
 }
 
 /* ============================================================
+   Pilares — en móvil y tablet, fotografía y texto en la MISMA fila
+   ============================================================
+   Por debajo de 1024px la fila abandona las 12 columnas: con --gutter a 24px
+   y sólo 335px útiles a 375px, once calles se comían la retícula entera
+   (cada columna quedaba en 5,9px). Un flex con su propia calle reparte mucho
+   mejor: la fotografía se queda en el 40% del ancho útil y el texto en el
+   resto. El marcado va texto → foto, así que la alternancia de lados sale de
+   adelantar la foto en el pilar marcado a la izquierda: sin duplicar nada. */
+@media (max-width: 1023.98px) {
+  .pilar .grid-12 {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .pilar-media {
+    flex: 0 0 40%;
+  }
+  .pilar-texto {
+    flex: 1 1 0;
+    min-width: 0; /* que el texto se ajuste en vez de desbordar la fila */
+  }
+  .pilar[data-lado="left"] .pilar-media {
+    order: -1;
+  }
+
+  /* Cuerpo tipográfico recalibrado para la columna estrecha: a 375px el texto
+     dispone de ~183px, así que el titular y el párrafo bajan de tamaño y el
+     aire entre bloques se comprime para que no quede apelmazado. */
+  .pilar-texto h3 {
+    margin-top: 0.5rem;
+    font-size: clamp(1.25rem, 0.95rem + 1.3vw, 1.75rem);
+  }
+  .pilar-texto .text-lede {
+    margin-top: 0.625rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  .pilar-texto > p:last-child {
+    margin-top: 0.875rem;
+    font-size: 0.6875rem;
+  }
+}
+
+/* ============================================================
    Galería — retícula editorial asimétrica y densa
    ============================================================ */
-.gal-figure {
-  margin: 0;
+/* El reset del margen del <figure> va en la capa «components» a propósito.
+   Tailwind 4 coloca sus utilidades en @layer utilities, y el CSS SIN capa
+   gana a CUALQUIER capa: dejando esta regla fuera de capa, `.gal-figure`
+   anulaba los `lg:mt-20` / `lg:mt-24` del escalonado y los márgenes se
+   calculaban a 0. Dentro de «components» pierde frente a las utilidades
+   —que es lo que se quiere— y sigue ganando al margen del navegador. */
+@layer components {
+  .gal-figure {
+    margin: 0;
+  }
 }
 .gal-cap {
   margin-top: clamp(10px, 1.4vw, 16px);
+}
+
+/* --- Contenedor de las tres filas -----------------------------------------
+   Escritorio y tablet: columna simple; cada fila se resuelve por su cuenta. */
+.gal-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}
+@media (min-width: 1024px) {
+  .gal-lista {
+    gap: 32px;
+  }
+}
+
+/* --- Móvil (< 768px): retícula de 12 columnas para toda la galería ---------
+   Las tres filas pasan a `display: contents`, así que las SEIS fotografías
+   se convierten en celdas de una única retícula y pueden emparejarse aunque
+   en el marcado vivan en contenedores distintos (el DOM no cambia: sólo
+   desaparece la caja del contenedor).
+
+   · horizontales (16/10) → 12 columnas: a ancho completo, porque emparejadas
+     quedarían demasiado bajas para leerse.
+   · verticales (3/4) → 6 columnas: de dos en dos. A 375px cada una mide
+     ~161 × 215px, de sobra para el objetivo táctil de 44px.
+
+   `order` da el ritmo horizontal / pareja / horizontal sin tocar el orden del
+   marcado, así que la retícula de escritorio se queda exactamente igual. */
+@media (max-width: 767.98px) {
+  .gal-lista {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 12px; /* la calle estrecha entre cada pareja */
+    row-gap: 40px;
+  }
+  .gal-lista > .gal-diptico,
+  .gal-lista > .gal-fila {
+    display: contents;
+  }
+  .gal-figure[data-axis="h"] {
+    grid-column: span 12;
+  }
+  .gal-figure[data-axis="v"] {
+    grid-column: span 6;
+  }
+  /* La vertical sin pareja (sólo hay tres) se alinea a la derecha, igual que
+     en escritorio: así el aire de su izquierda se lee como pausa buscada. */
+  .gal-figure[data-solo="true"] {
+    grid-column: 7 / span 6;
+  }
+  .gal-figure[data-orden="1"] {
+    order: 1;
+  }
+  .gal-figure[data-orden="2"] {
+    order: 2;
+  }
+  .gal-figure[data-orden="3"] {
+    order: 3;
+  }
+  .gal-figure[data-orden="4"] {
+    order: 4;
+  }
+  .gal-figure[data-orden="5"] {
+    order: 5;
+  }
+  .gal-figure[data-orden="6"] {
+    order: 6;
+  }
+  /* El pie de las emparejadas baja de cuerpo: a media columna, el más largo
+     («Dormitorio principal · Vista al mar») ocupa dos líneas igualmente, pero
+     así no se parte en tres ni pisa a la fotografía siguiente. */
+  .gal-figure[data-axis="v"] .js-cap {
+    font-size: 0.6875rem;
+    letter-spacing: 0.05em;
+  }
 }
 
 /* --- Fila 1: díptico. Las dos fotos comparten arista, sin calle ------------
@@ -1128,26 +1266,6 @@ html[data-scroll-bloqueado="true"] .site-header {
     grid-template-columns: 68.085% 31.915%;
     column-gap: 0;
     align-items: start;
-  }
-}
-
-/* --- Fila 3: la horizontal sangra hasta el borde de la ventana ------------
-   Rompe el margen de la página por la izquierda sin salirse de la retícula:
-   el desplazamiento es el margen lateral más la banda que sobra cuando la
-   ventana supera el ancho máximo del contenedor. El pie NO se desplaza. */
-.gal-bleed-left .media-frame {
-  margin-left: calc(
-    -1 *
-      (
-        var(--margin-x) +
-          (var(--ancho-util) - min(var(--ancho-util), var(--container-max))) / 2
-      )
-  );
-}
-@media (max-width: 1023.98px) {
-  /* Apilada: sangra por los dos lados → ancho completo de ventana */
-  .gal-bleed-left .media-frame {
-    margin-right: calc(-1 * var(--margin-x));
   }
 }
 
@@ -1564,8 +1682,9 @@ textarea.field-control {
    el cierre se animan sólo con opacidad y transform.
    ============================================================ */
 
-/* Cada fotografía de la galería es un botón: accionable con el dedo, con el
-   ratón y con el teclado (Enter y barra espaciadora), y con foco visible. */
+/* Cada fotografía ampliable es un botón: accionable con el dedo, con el ratón
+   y con el teclado (Enter y barra espaciadora), y con foco visible. Lo usan
+   las seis de la Galería y las cuatro sueltas (Entorno y los tres pilares). */
 .gal-boton {
   display: block;
   width: 100%;

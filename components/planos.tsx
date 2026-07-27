@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { gsap } from "@/lib/gsap";
-import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
+import { useAnimEffect } from "@/lib/use-anim-effect";
 import { armFailShowing } from "@/lib/anim";
 
 // El número va suelto para poder marcarlo en acento; el texto es el mismo.
@@ -16,7 +16,7 @@ export default function Planos() {
   const root = useRef<HTMLElement>(null);
   const pinRef = useRef<HTMLDivElement>(null);
 
-  useIsomorphicLayoutEffect(() => {
+  useAnimEffect(() => {
     const el = root.current;
     if (!el) return;
 
@@ -191,8 +191,8 @@ export default function Planos() {
             </h2>
             <p className="mt-6 lg:mt-8 max-w-[42ch] text-lede planos-lede">
               La parcela desciende cuarenta y dos metros hacia el sur. En lugar
-              de nivelarla, la casa la acompaña: tres plataformas escalonadas —
-              doce metros entre la primera y la última — que se apoyan en la
+              de nivelarla, la casa la acompaña: tres plataformas escalonadas
+              —doce metros entre la primera y la última— que se apoyan en la
               pendiente natural y orientan cada estancia hacia el valle y el
               Mediterráneo.
             </p>

@@ -4,7 +4,7 @@ import { useRef } from "react";
 import Image from "next/image";
 import imgDeclaracion from "@/public/img/declaracion.jpg";
 import { gsap, SplitText } from "@/lib/gsap";
-import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
+import { useAnimEffect } from "@/lib/use-anim-effect";
 import { afterFonts, armFailShowing } from "@/lib/anim";
 
 export default function Declaracion() {
@@ -22,7 +22,7 @@ export default function Declaracion() {
     });
   };
 
-  useIsomorphicLayoutEffect(() => {
+  useAnimEffect(() => {
     const el = root.current;
     if (!el) return;
 

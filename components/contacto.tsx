@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { gsap } from "@/lib/gsap";
-import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
+import { useAnimEffect } from "@/lib/use-anim-effect";
 import { armFailShowing } from "@/lib/anim";
 
 type Errores = Partial<Record<"nombre" | "email" | "mensaje", string>>;
@@ -62,7 +62,7 @@ export default function Contacto() {
     setEnviado(true);
   };
 
-  useIsomorphicLayoutEffect(() => {
+  useAnimEffect(() => {
     const el = root.current;
     if (!el) return;
 

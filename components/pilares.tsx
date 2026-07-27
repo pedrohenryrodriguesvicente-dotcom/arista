@@ -2,13 +2,18 @@
 
 import { useRef } from "react";
 import Image, { type StaticImageData } from "next/image";
+import dynamic from "next/dynamic";
 // Importaciones estáticas: Next genera en build el blurDataURL de cada foto.
 import imgPilar01 from "@/public/img/pilar-01.jpg";
 import imgPilar02 from "@/public/img/pilar-02.jpg";
 import imgPilar03 from "@/public/img/pilar-03.jpg";
 import { gsap } from "@/lib/gsap";
-import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
+import { useAnimEffect } from "@/lib/use-anim-effect";
 import { armFailShowing } from "@/lib/anim";
+import { useVisorSuelto } from "@/lib/use-visor";
+
+// Mismo visor que la Galería, cargado bajo demanda (no pesa en el arranque).
+const Lightbox = dynamic(() => import("@/components/lightbox"), { ssr: false });
 
 type Pilar = {
   num: string;
@@ -20,6 +25,9 @@ type Pilar = {
   pos: string;
   alt: string;
 };
+
+// Pie que muestra el visor: mismo patrón para los tres, «título · material».
+const pie = (p: Pilar) => `${p.title} · ${p.dato}`;
 
 const PILARES: Pilar[] = [
   {
@@ -56,8 +64,9 @@ const PILARES: Pilar[] = [
 
 export default function Pilares() {
   const root = useRef<HTMLElement>(null);
+  const visor = useVisorSuelto();
 
-  useIsomorphicLayoutEffect(() => {
+  useAnimEffect(() => {
     const el = root.current;
     if (!el) return;
 
@@ -205,11 +214,11 @@ export default function Pilares() {
                 ? "lg:col-start-9 lg:col-span-4"
                 : "lg:col-start-1 lg:col-span-4";
             return (
-              <article key={p.num} className="js-row pilar">
+              <article key={p.num} className="js-row pilar" data-lado={p.side}>
                 <span className="js-line hairline" />
                 <div className="grid-12 items-center gap-y-6 pt-8 lg:gap-y-0 lg:pt-10">
                   <div
-                    className={`js-text col-span-12 ${textCols} lg:row-start-1`}
+                    className={`js-text pilar-texto col-span-12 ${textCols} lg:row-start-1`}
                   >
                     <p className="label acento">{p.num}</p>
                     <h3 className="mt-4 font-display text-h3 text-grafito">
@@ -220,19 +229,31 @@ export default function Pilares() {
                     </p>
                     <p className="mt-6 label text-gris">{p.dato}</p>
                   </div>
-                  <div className={`col-span-12 ${mediaCols} lg:row-start-1`}>
-                    <div className="js-frame media-frame aspect-[4/5]">
+                  <div
+                    className={`pilar-media col-span-12 ${mediaCols} lg:row-start-1`}
+                  >
+                    <button
+                      type="button"
+                      className="js-frame media-frame gal-boton aspect-[4/5]"
+                      aria-label={`Ampliar: ${p.alt}`}
+                      onClick={(e) =>
+                        visor.abrir(
+                          { src: p.img, cap: pie(p), alt: p.alt },
+                          e.currentTarget
+                        )
+                      }
+                    >
                       <Image
                         src={p.img}
-                        alt={p.alt}
+                        alt=""
                         fill
                         quality={88}
-                        sizes="(min-width: 1024px) 33vw, (min-width: 768px) calc(100vw - 96px), calc(100vw - 40px)"
+                        sizes="(min-width: 1024px) 33vw, 42vw"
                         placeholder="blur"
                         className="js-img object-cover"
                         style={{ objectPosition: p.pos }}
                       />
-                    </div>
+                    </button>
                   </div>
                 </div>
               </article>
@@ -240,6 +261,15 @@ export default function Pilares() {
           })}
         </div>
       </div>
+
+      {visor.foto && (
+        <Lightbox
+          fotos={[visor.foto]}
+          indice={0}
+          onIr={() => {}}
+          onCerrar={visor.cerrar}
+        />
+      )}
     </section>
   );
 }

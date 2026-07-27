@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" role="img" aria-label="ARISTA">
+  <!--
+    Icono de ARISTA para los tamaños PEQUEÑOS (pestaña del navegador).
+
+    La ilustración fotográfica del paquete PNG (apple-touch-icon y los
+    android-chrome) cubre los tamaños grandes, donde sus líneas finas sí se
+    leen. A 16 px esas líneas miden menos de un píxel y sólo dan una mancha
+    gris: por eso aquí el dibujo se reduce a seis rectángulos.
+
+    RETÍCULA. El viewBox es de 16 unidades y TODAS las coordenadas son
+    enteras, así que a 16, 32 y 48 px (x1, x2, x3) cada borde cae en frontera
+    de píxel: sin antialiasing y sin un solo gris intermedio. Los PNG y el
+    .ico del paquete se generan de esta misma geometría, así que los cuatro
+    tamaños pequeños muestran exactamente el mismo dibujo.
+
+    Dos volúmenes escalonados sobre una línea de suelo, cada uno rematado por
+    una losa plana volada. La losa del volumen alto lleva doble grosor: es la
+    arista que da nombre al proyecto y tiene que ser el foco visual.
+  -->
+  <rect width="16" height="16" fill="#1A1917"/>
+  <g fill="#F5F3EF">
+    <rect x="1" y="12" width="14" height="1"/>  <!-- línea de suelo -->
+    <rect x="8" y="4" width="1" height="8"/>    <!-- medianera -->
+    <rect x="2" y="7" width="1" height="5"/>    <!-- muro del cuerpo bajo -->
+    <rect x="1" y="7" width="8" height="1"/>    <!-- losa del cuerpo bajo -->
+    <rect x="13" y="6" width="1" height="6"/>   <!-- muro del cuerpo alto -->
+    <rect x="7" y="4" width="8" height="2"/>    <!-- losa alta: la arista -->
+  </g>
+</svg>

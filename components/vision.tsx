@@ -6,7 +6,7 @@ import Image from "next/image";
 // (y conoce las dimensiones reales del archivo).
 import imgVision from "@/public/img/vision.jpg";
 import { gsap } from "@/lib/gsap";
-import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
+import { useAnimEffect } from "@/lib/use-anim-effect";
 import { armFailShowing } from "@/lib/anim";
 
 const DATOS = [
@@ -19,7 +19,7 @@ const DATOS = [
 export default function Vision() {
   const root = useRef<HTMLElement>(null);
 
-  useIsomorphicLayoutEffect(() => {
+  useAnimEffect(() => {
     const el = root.current;
     if (!el) return;
 

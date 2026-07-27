@@ -55,6 +55,24 @@ export const metadata: Metadata = {
   creator: "Vertex Web Design",
   publisher: "ARISTA",
   alternates: { canonical: "/" },
+  // Iconos servidos desde public/. Los tamaños PEQUEÑOS usan el icono
+  // geométrico (favicon.svg y los rásteres generados de su misma geometría):
+  // la ilustración era ilegible por debajo de 32 px. Los GRANDES —apple-touch
+  // y los android-chrome del manifest— sí usan la ilustración.
+  // El SVG va primero y con sizes "any" para que los navegadores modernos lo
+  // prefieran; el .ico queda de reserva para los que no admiten SVG (Safari).
+  icons: {
+    icon: [
+      { url: "/favicon.svg", sizes: "any", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "16x16 32x32 48x48", type: "image/x-icon" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
+  manifest: "/site.webmanifest",
   openGraph: {
     type: "website",
     locale: "es_ES",
@@ -95,7 +113,6 @@ const JSON_LD = {
   image: `${SITIO}/og.jpg`,
   numberOfBedrooms: 5,
   numberOfBathroomsTotal: 6,
-  numberOfRooms: 11,
   floorSize: {
     "@type": "QuantitativeValue",
     value: 720,

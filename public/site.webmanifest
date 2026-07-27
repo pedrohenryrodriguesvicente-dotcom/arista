@@ -1,0 +1,23 @@
+{
+  "name": "ARISTA",
+  "short_name": "ARISTA",
+  "description": "Residencia unifamiliar de obra nueva en Benahavís, Marbella: 720 m² en tres plataformas sobre la ladera, orientadas al sur y abiertas al Mediterráneo.",
+  "lang": "es-ES",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#1A1917",
+  "background_color": "#1A1917",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

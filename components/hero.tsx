@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { gsap, SplitText } from "@/lib/gsap";
 import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
+import { afterFonts } from "@/lib/anim";
 
 export default function Hero() {
   const rootRef = useRef<HTMLElement>(null);
@@ -72,14 +73,6 @@ export default function Hero() {
             const rr = root.getBoundingClientRect();
             const fs = parseFloat(getComputedStyle(title).fontSize);
             tick.style.top = `${tr.bottom - rr.top - fs * 0.22}px`;
-          };
-
-          const afterFonts = (fn: () => void) => {
-            if (document.fonts && document.fonts.status !== "loaded") {
-              document.fonts.ready.then(fn);
-            } else {
-              fn();
-            }
           };
 
           // Recoloca la marca al redimensionar (el titular se recentra).

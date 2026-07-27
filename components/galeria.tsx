@@ -11,7 +11,7 @@ import img04 from "@/public/img/galeria-04.jpg";
 import img05 from "@/public/img/galeria-05.jpg";
 import img06 from "@/public/img/galeria-06.jpg";
 import { gsap } from "@/lib/gsap";
-import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
+import { useAnimEffect } from "@/lib/use-anim-effect";
 import { armFailShowing } from "@/lib/anim";
 
 type Foto = {
@@ -19,7 +19,15 @@ type Foto = {
   ratio: string; // aspect-ratio css
   cols: string; // clases de columnas (escritorio)
   offset: string; // desplazamiento vertical (escritorio)
-  axis: "v" | "h"; // orientación (para el parallax)
+  axis: "v" | "h"; // orientación (parallax + ancho en móvil)
+  // Orden de lectura POR DEBAJO DE 768px, donde las tres verticales se
+  // emparejan de dos en dos y las horizontales van a ancho completo. Alterna
+  // horizontal / pareja para dar ritmo; en escritorio no se aplica.
+  orden: number;
+  // Sólo hay TRES verticales, así que una se queda sin pareja. En vez de
+  // dejarla suelta a la izquierda, se alinea a la derecha: la asimetría se lee
+  // como decisión editorial y coincide con el lado que ocupa en escritorio.
+  solo?: boolean;
   sizes: string;
   cap: string;
   alt: string;
@@ -35,6 +43,7 @@ const DIPTICO: Foto[] = [
     cols: "",
     offset: "",
     axis: "h",
+    orden: 1,
     sizes: "(min-width: 1024px) 66vw, (min-width: 768px) calc(100vw - 96px), calc(100vw - 40px)",
     cap: "Fachada sur · Acceso principal",
     alt: "Fachada sur de la residencia: dos volúmenes claros de cubierta plana con grandes paños acristalados, celosías de madera y un revestimiento de piedra oscura junto al acceso principal.",
@@ -45,7 +54,8 @@ const DIPTICO: Foto[] = [
     cols: "",
     offset: "",
     axis: "v",
-    sizes: "(min-width: 1024px) 31vw, (min-width: 768px) calc(100vw - 96px), calc(100vw - 40px)",
+    orden: 2,
+    sizes: "(min-width: 1024px) 31vw, (min-width: 768px) calc(100vw - 96px), calc(50vw - 16px)",
     cap: "Escalera central · Luz rasante",
     alt: "Escalera central de la casa iluminada por luz rasante que resbala sobre la piedra y la madera.",
   },
@@ -60,7 +70,8 @@ const ROWS: Foto[][] = [
       cols: "lg:col-start-1 lg:col-span-4",
       offset: "",
       axis: "v",
-      sizes: "(min-width: 1024px) 31vw, (min-width: 768px) calc(100vw - 96px), calc(100vw - 40px)",
+      orden: 3,
+      sizes: "(min-width: 1024px) 31vw, (min-width: 768px) calc(100vw - 96px), calc(50vw - 16px)",
       cap: "Baño principal · Travertino",
       alt: "Baño principal revestido de travertino, con encimera de piedra maciza y lavabo integrado, espejo de arco y ducha de obra al fondo.",
     },
@@ -70,6 +81,7 @@ const ROWS: Foto[][] = [
       cols: "lg:col-start-6 lg:col-span-7",
       offset: "lg:mt-20",
       axis: "h",
+      orden: 4,
       sizes: "(min-width: 1024px) 56vw, (min-width: 768px) calc(100vw - 96px), calc(100vw - 40px)",
       cap: "Salón · Doble orientación",
       alt: "Salón a doble altura con chimenea, suelo de madera y grandes cristaleras corridas abiertas a la terraza y la piscina.",
@@ -77,13 +89,15 @@ const ROWS: Foto[][] = [
   ],
   [
     {
-      // Sangra hasta el borde izquierdo de la ventana (el pie no lo hace)
       src: img05,
       ratio: "16 / 10",
-      cols: "gal-bleed-left lg:col-start-1 lg:col-span-7",
+      cols: "lg:col-start-1 lg:col-span-7",
       offset: "",
       axis: "h",
-      sizes: "(min-width: 1024px) 60vw, 100vw",
+      // Cierra la galería en móvil (ver `orden`): así no quedan dos
+      // horizontales seguidas ni una vertical suelta al final.
+      orden: 6,
+      sizes: "(min-width: 1024px) 56vw, (min-width: 768px) calc(100vw - 96px), calc(100vw - 40px)",
       cap: "Cocina · Isla de mármol",
       alt: "Cocina abierta con una gran isla de mármol y carpintería de madera de iroko.",
     },
@@ -93,7 +107,9 @@ const ROWS: Foto[][] = [
       cols: "lg:col-start-9 lg:col-span-4",
       offset: "lg:mt-24",
       axis: "v",
-      sizes: "(min-width: 1024px) 31vw, (min-width: 768px) calc(100vw - 96px), calc(100vw - 40px)",
+      orden: 5,
+      solo: true,
+      sizes: "(min-width: 1024px) 31vw, (min-width: 768px) calc(100vw - 96px), calc(50vw - 16px)",
       cap: "Dormitorio principal · Vista al mar",
       alt: "Dormitorio principal con la cama orientada hacia un ventanal que enmarca el Mediterráneo.",
     },
@@ -123,7 +139,7 @@ export default function Galeria() {
     origen.current?.focus();
   }, []);
 
-  useIsomorphicLayoutEffect(() => {
+  useAnimEffect(() => {
     const el = root.current;
     if (!el) return;
 
@@ -279,13 +295,15 @@ export default function Galeria() {
         </div>
 
         {/* Retícula asimétrica */}
-        <div className="mt-14 flex flex-col gap-14 lg:mt-20 lg:gap-8">
-          {/* Fila 1 — díptico continuo (en móvil se apila, sin tocarse) */}
+        <div className="gal-lista mt-14 lg:mt-20">
+          {/* Fila 1 — díptico continuo (por debajo de 768px el contenedor pasa
+              a display:contents y sus fotos entran en la retícula de móvil) */}
           <div className="gal-diptico">
             {DIPTICO.map((f) => (
               <figure
                 key={f.src.src}
                 data-axis={f.axis}
+                data-orden={f.orden}
                 className="js-fig gal-figure"
               >
                 <button
@@ -318,11 +336,13 @@ export default function Galeria() {
           </div>
 
           {ROWS.map((row, ri) => (
-            <div key={ri} className="grid-12 gap-y-14 lg:gap-y-0">
+            <div key={ri} className="gal-fila grid-12 gap-y-14 lg:gap-y-0">
               {row.map((f) => (
                 <figure
                   key={f.src.src}
                   data-axis={f.axis}
+                  data-orden={f.orden}
+                  data-solo={f.solo ? "true" : undefined}
                   className={`js-fig gal-figure col-span-12 ${f.cols} ${f.offset}`}
                 >
                   <button

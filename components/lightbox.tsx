@@ -32,6 +32,9 @@ export default function Lightbox({ fotos, indice, onIr, onCerrar }: Props) {
 
   const total = fotos.length;
   const foto = fotos[indice];
+  // Fotografía suelta (Entorno, pilar 03): no pertenece a ninguna secuencia,
+  // así que no hay flechas, ni indicador de posición, ni recorrido con teclado.
+  const unica = total === 1;
 
   // El portal necesita el DOM: sólo se pinta tras el montaje en cliente.
   useEffect(() => setMontado(true), []);
@@ -73,12 +76,12 @@ export default function Lightbox({ fotos, indice, onIr, onCerrar }: Props) {
         pedirCierre();
         return;
       }
-      if (e.key === "ArrowLeft") {
+      if (!unica && e.key === "ArrowLeft") {
         e.preventDefault();
         ir(-1);
         return;
       }
-      if (e.key === "ArrowRight") {
+      if (!unica && e.key === "ArrowRight") {
         e.preventDefault();
         ir(1);
         return;
@@ -105,7 +108,7 @@ export default function Lightbox({ fotos, indice, onIr, onCerrar }: Props) {
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [ir, pedirCierre]);
+  }, [ir, pedirCierre, unica]);
 
   // --- Gestos táctiles -------------------------------------------------
   // Se sigue UN solo dedo. En cuanto hay dos, el gesto propio se abandona y
@@ -172,7 +175,7 @@ export default function Lightbox({ fotos, indice, onIr, onCerrar }: Props) {
     soltarArrastre();
     if (ejeFinal === "y" && dy > UMBRAL_ARRASTRE) {
       pedirCierre();
-    } else if (ejeFinal === "x" && Math.abs(dx) > UMBRAL_DESLIZ) {
+    } else if (!unica && ejeFinal === "x" && Math.abs(dx) > UMBRAL_DESLIZ) {
       ir(dx < 0 ? 1 : -1);
     }
   };
@@ -208,7 +211,11 @@ export default function Lightbox({ fotos, indice, onIr, onCerrar }: Props) {
       data-listo={listo}
       role="dialog"
       aria-modal="true"
-      aria-label={`Fotografía ${indice + 1} de ${total}: ${foto.cap}`}
+      aria-label={
+        unica
+          ? `Fotografía: ${foto.cap}`
+          : `Fotografía ${indice + 1} de ${total}: ${foto.cap}`
+      }
     >
       <div
         className="lightbox-lienzo"
@@ -235,9 +242,12 @@ export default function Lightbox({ fotos, indice, onIr, onCerrar }: Props) {
 
       <div className="lightbox-barra">
         <p className="lightbox-pie label">{foto.cap}</p>
-        <p className="lightbox-indice label">
-          {String(indice + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
-        </p>
+        {!unica && (
+          <p className="lightbox-indice label">
+            {String(indice + 1).padStart(2, "0")} /{" "}
+            {String(total).padStart(2, "0")}
+          </p>
+        )}
       </div>
 
       <button
@@ -252,27 +262,31 @@ export default function Lightbox({ fotos, indice, onIr, onCerrar }: Props) {
         </svg>
       </button>
 
-      <button
-        type="button"
-        className="lightbox-btn lightbox-nav lightbox-prev"
-        onClick={() => ir(-1)}
-      >
-        <span className="sr-only">Fotografía anterior</span>
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M15 4 L7 12 L15 20" />
-        </svg>
-      </button>
+      {!unica && (
+        <>
+          <button
+            type="button"
+            className="lightbox-btn lightbox-nav lightbox-prev"
+            onClick={() => ir(-1)}
+          >
+            <span className="sr-only">Fotografía anterior</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M15 4 L7 12 L15 20" />
+            </svg>
+          </button>
 
-      <button
-        type="button"
-        className="lightbox-btn lightbox-nav lightbox-next"
-        onClick={() => ir(1)}
-      >
-        <span className="sr-only">Fotografía siguiente</span>
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M9 4 L17 12 L9 20" />
-        </svg>
-      </button>
+          <button
+            type="button"
+            className="lightbox-btn lightbox-nav lightbox-next"
+            onClick={() => ir(1)}
+          >
+            <span className="sr-only">Fotografía siguiente</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M9 4 L17 12 L9 20" />
+            </svg>
+          </button>
+        </>
+      )}
     </div>,
     document.body
   );

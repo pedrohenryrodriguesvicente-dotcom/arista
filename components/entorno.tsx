@@ -2,10 +2,22 @@
 
 import { useRef } from "react";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import imgMar from "@/public/img/entorno-mar.jpg";
 import { gsap } from "@/lib/gsap";
-import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
+import { useAnimEffect } from "@/lib/use-anim-effect";
 import { armFailShowing } from "@/lib/anim";
+import { useVisorSuelto } from "@/lib/use-visor";
+
+// Mismo visor que la Galería, cargado bajo demanda (no pesa en el arranque).
+const Lightbox = dynamic(() => import("@/components/lightbox"), { ssr: false });
+
+const PIE_MAR = "El Mediterráneo · Al sur";
+const ALT_MAR =
+  "El Mediterráneo al frente de la residencia: la costa y el mar abierto vistos desde la ladera, con el horizonte al sur.";
+
+// Una sola foto → el visor se abre sin flechas ni indicador de posición.
+const FOTO_MAR = { src: imgMar, cap: PIE_MAR, alt: ALT_MAR };
 
 const TIEMPOS = [
   { n: 10, label: "min · San Pedro de Alcántara" },
@@ -16,8 +28,9 @@ const TIEMPOS = [
 
 export default function Entorno() {
   const root = useRef<HTMLElement>(null);
+  const visor = useVisorSuelto();
 
-  useIsomorphicLayoutEffect(() => {
+  useAnimEffect(() => {
     const el = root.current;
     if (!el) return;
 
@@ -226,14 +239,17 @@ export default function Entorno() {
         {/* Una sola fotografía horizontal, a lo ancho de la retícula */}
         <div className="mt-12 lg:mt-16">
           <figure data-axis="h" className="js-fig gal-figure">
-            <div
-              className="js-frame media-frame"
+            <button
+              type="button"
+              className="js-frame media-frame gal-boton"
               style={{ aspectRatio: "16 / 9" }}
+              aria-label={`Ampliar: ${ALT_MAR}`}
+              onClick={(e) => visor.abrir(FOTO_MAR, e.currentTarget)}
             >
               <div className="js-parallax parallax-layer">
                 <Image
                   src={imgMar}
-                  alt="El Mediterráneo al frente de la residencia: la costa y el mar abierto vistos desde la ladera, con el horizonte al sur."
+                  alt=""
                   fill
                   quality={88}
                   sizes="(min-width: 1440px) 1344px, (min-width: 768px) calc(100vw - 96px), calc(100vw - 40px)"
@@ -242,9 +258,9 @@ export default function Entorno() {
                   style={{ objectPosition: "50% 45%" }}
                 />
               </div>
-            </div>
+            </button>
             <figcaption className="js-cap entorno-cap label text-gris">
-              El Mediterráneo · Al sur
+              {PIE_MAR}
             </figcaption>
           </figure>
         </div>
@@ -267,6 +283,15 @@ export default function Entorno() {
           ))}
         </div>
       </div>
+
+      {visor.foto && (
+        <Lightbox
+          fotos={[visor.foto]}
+          indice={0}
+          onIr={() => {}}
+          onCerrar={visor.cerrar}
+        />
+      )}
     </section>
   );
 }

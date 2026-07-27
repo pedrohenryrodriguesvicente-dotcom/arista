@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { gsap } from "@/lib/gsap";
-import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
+import { useAnimEffect } from "@/lib/use-anim-effect";
 import { armFailShowing } from "@/lib/anim";
 
 const DATOS: [string, string][] = [
@@ -13,7 +13,7 @@ const DATOS: [string, string][] = [
   ["Niveles", "3 plataformas"],
   ["Orientación", "Sur"],
   ["Altitud", "210 m sobre el mar"],
-  ["Materiales", "Piedra caliza, iroko, travertino"],
+  ["Materiales", "Piedra caliza, iroko, travertino, vidrio"],
   ["Eficiencia", "Certificación A"],
   ["Año de construcción", "2026"],
   ["Entrega", "Inmediata"],
@@ -23,7 +23,7 @@ const DATOS: [string, string][] = [
 export default function FichaTecnica() {
   const root = useRef<HTMLElement>(null);
 
-  useIsomorphicLayoutEffect(() => {
+  useAnimEffect(() => {
     const el = root.current;
     if (!el) return;
 
