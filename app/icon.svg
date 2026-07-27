@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="ARISTA">
+  <rect width="64" height="64" fill="#1A1917"/>
+  <!--
+    Vivienda contemporánea reducida a seis trazos: dos cuerpos escalonados
+    sobre una misma línea de suelo, cada uno rematado por una losa plana que
+    vuela por fuera del cuerpo. Nada más: a 16 px no cabe un detalle más.
+
+    RETÍCULA. A 16 px el lienzo se reduce a 1/4, así que las coordenadas están
+    calculadas para caer sobre píxeles enteros y no difuminarse:
+      · trazos de grosor 4 (= 1 px a 16): centro en múltiplo de 4 más 2
+      · trazo de grosor 8 (= 2 px a 16): centro en múltiplo de 4
+      · extremos de las horizontales en múltiplos de 4 (frontera de píxel)
+    Se cumple igual a 32 y a 64 px.
+  -->
+  <g fill="none" stroke="#F5F3EF" stroke-linecap="butt" stroke-linejoin="miter">
+    <!-- Línea de suelo: une la base de ambos cuerpos y sobresale por los lados -->
+    <line x1="8" y1="46" x2="56" y2="46" stroke-width="4"/>
+    <!-- Cuerpo bajo y ancho (14→34) -->
+    <line x1="14" y1="46" x2="14" y2="30" stroke-width="4"/>
+    <!-- Medianera: cierra el cuerpo bajo y levanta el alto -->
+    <line x1="34" y1="46" x2="34" y2="20" stroke-width="4"/>
+    <!-- Cuerpo alto y estrecho (34→50) -->
+    <line x1="50" y1="46" x2="50" y2="20" stroke-width="4"/>
+    <!-- Losa del cuerpo bajo, volada -->
+    <line x1="8" y1="30" x2="36" y2="30" stroke-width="4"/>
+    <!--
+      Losa del cuerpo alto. Es el trazo de más peso del icono: esa línea es
+      la arista del proyecto y tiene que ser el foco visual. A 16 px sólo hay
+      dos grosores posibles —1 px y 2 px—, así que el salto es de 4 a 8; con
+      un 6 intermedio la losa caía a caballo de dos filas y salía gris.
+    -->
+    <line x1="28" y1="20" x2="56" y2="20" stroke-width="8"/>
+  </g>
+</svg>

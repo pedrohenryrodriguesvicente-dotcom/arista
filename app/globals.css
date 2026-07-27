@@ -1,0 +1,1709 @@
+@import "tailwindcss";
+
+/* ============================================================
+   ARISTA — Sistema de diseño
+   Tokens definidos como variables CSS y expuestos a Tailwind
+   mediante @theme (genera utilidades: bg-*, text-*, font-*, …).
+   ============================================================ */
+
+@theme {
+  /* ---- Color -------------------------------------------------- */
+  --color-blanco: #ffffff; /* fondo principal: BLANCO PURO */
+  --color-hueso: #f5f3ef; /* fondo alterno, muy sutil */
+  --color-piedra: #e4dfd6; /* piedra */
+  --color-grafito: #1a1917; /* texto */
+  --color-gris: #4a4640; /* gris de cuerpo — profundo, para AA holgado sobre blanco */
+  --color-terracota: #9c5a3c; /* acento cálido sobre fondo CLARO — 5,33:1 sobre blanco */
+  /* Mismo tono (H 18,8°), aclarado para fondo OSCURO: el terracota base sólo
+     da 3,3:1 sobre el grafito y no cumple AA. Éste da 4,93:1. */
+  --color-terracota-claro: #bb7758;
+  --color-horizonte: #4a6b7c; /* acento azul, definido sin uso por ahora */
+  --color-linea: rgba(26, 25, 23, 0.14); /* filete / hairline */
+  --color-linea-fuerte: rgba(26, 25, 23, 0.32); /* divisor destacado */
+  --color-arista: rgba(26, 25, 23, 0.32); /* la línea "arista" (seña de marca) */
+
+  /* ---- Tipografía --------------------------------------------- */
+  --font-display: var(--font-instrument-serif), Georgia, "Times New Roman",
+    serif;
+  --font-sans: var(--font-geist-sans), system-ui, -apple-system, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+
+  /* ---- Escala tipográfica fluida (clamp) ---------------------- */
+  --text-wordmark: clamp(1.0625rem, 1rem + 0.32vw, 1.3125rem);
+  --text-wordmark--line-height: 1;
+  --text-wordmark--letter-spacing: 0.02em;
+
+  --text-nav: 0.6875rem; /* 11px — etiquetas de navegación */
+  --text-nav--line-height: 1;
+  --text-nav--letter-spacing: 0.18em;
+
+  --text-eyebrow: clamp(0.6875rem, 0.66rem + 0.14vw, 0.8125rem);
+  --text-eyebrow--line-height: 1.4;
+  --text-eyebrow--letter-spacing: 0.22em;
+
+  --text-data: clamp(0.6875rem, 0.66rem + 0.12vw, 0.78rem);
+  --text-data--line-height: 1.5;
+  --text-data--letter-spacing: 0.14em;
+
+  --text-lede: clamp(1.0625rem, 1rem + 0.5vw, 1.3125rem);
+  --text-lede--line-height: 1.55;
+
+  --text-body: 1rem;
+  --text-body--line-height: 1.6;
+
+  /* Titular de sección: escala mayor y dominante. Crece con fluidez de 38px
+     (375) a 76px (≥1288). El aire de las secciones pedía una voz más alta. */
+  --text-h2: clamp(2.375rem, 1.45rem + 4.1vw, 4.75rem);
+  --text-h2--line-height: 1.03;
+  --text-h2--letter-spacing: -0.02em;
+
+  --text-h3: clamp(1.5rem, 1.15rem + 1.6vw, 2.5rem);
+  --text-h3--line-height: 1.1;
+  --text-h3--letter-spacing: -0.01em;
+
+  --text-display: clamp(2.75rem, 1.4rem + 6vw, 6.25rem);
+  --text-display--line-height: 1.03;
+  --text-display--letter-spacing: -0.02em;
+}
+
+/* ---- Tokens de retícula / layout (no necesitan utilidad) ------ */
+:root {
+  --container-max: 1440px;
+  --gutter: 24px;
+  /* Ancho de ventana realmente disponible para los sangrados. --sb-comp sólo
+     vale algo mientras el scroll está bloqueado (menú móvil o visor) y la
+     barra de desplazamiento clásica ha desaparecido: entonces el body lleva
+     ese hueco como relleno derecho. Sin descontarlo, las fotos a sangre se
+     descolocarían unos píxeles al abrir el menú. En táctil siempre es 0. */
+  --ancho-util: calc(100vw - var(--sb-comp, 0px));
+  --margin-x: 20px; /* margen lateral en móvil */
+  --header-h: 46px; /* barra fija más fina */
+  --hero-split: calc(100% / 12 * 5); /* columna de texto = 5/12 */
+  /* Ritmo vertical entre secciones: fluido, denso y editorial (≈ mitad del
+     aire anterior). Manteniendo el compás de 8px en los extremos. */
+  --space-section: clamp(3rem, 2.3rem + 3vw, 4.5rem);
+}
+
+@media (min-width: 768px) {
+  :root {
+    --margin-x: 48px; /* margen lateral en escritorio */
+    --header-h: 56px; /* barra fija más fina (~26% menos que antes) */
+  }
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+
+html {
+  -webkit-text-size-adjust: 100%;
+  background-color: var(--color-blanco);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  min-height: 100svh;
+  background-color: var(--color-blanco);
+  color: var(--color-grafito);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: 1.6;
+  /* evita scroll horizontal por sangrados a pantalla completa */
+  overflow-x: clip;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Compensa el header fijo al navegar por anclas */
+:where(section, footer)[id] {
+  scroll-margin-top: calc(var(--header-h) + 16px);
+}
+
+::selection {
+  background-color: var(--color-grafito);
+  color: var(--color-blanco);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-grafito);
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+
+/* Saltar al contenido: fuera de pantalla hasta recibir el foco. No se usa
+   display:none ni visibility:hidden porque eso lo sacaría del orden de
+   tabulación, que es justo lo que tiene que encabezar. */
+.skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 100;
+  transform: translateY(calc(-100% - 16px));
+  padding: 12px 20px;
+  background-color: var(--color-grafito);
+  color: var(--color-hueso);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 2px;
+  transition: transform 0.2s ease;
+}
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid var(--color-hueso);
+  outline-offset: 2px;
+}
+/* El destino recibe el foco por programa: no debe dibujar anillo */
+#contenido:focus {
+  outline: none;
+}
+
+/* Respeta prefers-reduced-motion sin desactivar la experiencia por defecto */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================================
+   Superficies oscuras
+   Las cuatro zonas en grafito del sitio —Planos, Ficha técnica, el panel de
+   datos de Visión y el pie— comparten EXACTAMENTE el mismo fondo y la misma
+   escala de tonos claros. Se declara una sola vez para que no puedan
+   divergir. Todos los cortes con las secciones claras son limpios: aquí no
+   hay ninguna banda de transición ni degradado.
+   Ratios sobre #1A1917: 62 % → 6,7:1 · 66 % → 7,5:1 · 74 % → 9,1:1 ·
+   78 % → 10:1 · 82 % → 11:1 · hueso → 15,9:1. Todos AA con holgura.
+   ============================================================ */
+.planos,
+.ficha,
+.vision-panel,
+.footer,
+.mobile-menu-panel,
+.lightbox {
+  background-color: var(--color-grafito);
+  color: var(--color-hueso);
+
+  --tono-eyebrow: color-mix(in srgb, var(--color-hueso) 62%, transparent);
+  --tono-nota: color-mix(in srgb, var(--color-hueso) 66%, transparent);
+  --tono-etiqueta: color-mix(in srgb, var(--color-hueso) 74%, transparent);
+  --tono-lede: color-mix(in srgb, var(--color-hueso) 78%, transparent);
+  --tono-dato: color-mix(in srgb, var(--color-hueso) 82%, transparent);
+  --tono-filete: color-mix(in srgb, var(--color-hueso) 18%, transparent);
+}
+/* La selección y el anillo de foco globales son grafito: invisibles aquí. */
+.planos ::selection,
+.ficha ::selection,
+.vision-panel ::selection,
+.footer ::selection,
+.mobile-menu-panel ::selection,
+.lightbox ::selection {
+  background-color: var(--color-hueso);
+  color: var(--color-grafito);
+}
+.planos :focus-visible,
+.ficha :focus-visible,
+.vision-panel :focus-visible,
+.footer :focus-visible,
+.mobile-menu-panel :focus-visible,
+.lightbox :focus-visible {
+  outline-color: var(--color-hueso);
+}
+
+/* ============================================================
+   Utilidades de composición
+   ============================================================ */
+
+/* Contenedor centrado con márgenes y ancho máximo del sistema */
+.shell {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--margin-x);
+}
+
+/* Retícula base de 12 columnas (para secciones futuras) */
+.grid-12 {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+}
+
+/* Ritmo vertical de sección (fluido) */
+.section-y {
+  padding-block: var(--space-section);
+}
+
+/* Imagen a sangre: ocupa el ancho completo de la ventana rompiendo los
+   márgenes de la retícula. El body tiene overflow-x: clip → sin scroll
+   horizontal aunque 100vw incluya la barra de scroll. */
+.full-bleed {
+  position: relative;
+  left: 50%;
+  right: 50%;
+  width: var(--ancho-util);
+  margin-left: calc(var(--ancho-util) / -2);
+  margin-right: calc(var(--ancho-util) / -2);
+}
+
+/* Marco de imagen a sangre: recorte (clip-path lo anima GSAP) + capa interior
+   sobredimensionada para el parallax (nunca deja franjas vacías). */
+.bleed-media {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-piedra);
+}
+.parallax-layer {
+  position: absolute;
+  inset: -10% 0; /* sobre-escaneo del 10% arriba y abajo para el parallax */
+  will-change: transform;
+}
+
+/* Etiqueta / dato — Instrument Serif en mayúsculas. Una serif pequeña con mucho
+   tracking se vuelve frágil, así que el espaciado es discreto (0.06em), el
+   cuerpo un punto mayor (12–13px) para que la serif tenga presencia, peso
+   regular (el único de Instrument Serif) y cifras tabulares (para que los
+   números sigan alineando en columna). El color lo pone cada contexto. */
+.label {
+  font-family: var(--font-display);
+  font-size: clamp(0.75rem, 0.72rem + 0.16vw, 0.8125rem);
+  line-height: 1.35;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Navegación del header: se mantiene en Geist Sans a propósito. La serif a 11px
+   en mayúsculas sobre la fotografía del hero resultaba frágil y comprometía el
+   contraste AA; el sans conserva nitidez, peso y legibilidad en esa franja. */
+.nav-label {
+  font-family: var(--font-sans);
+  font-size: 0.6563rem;
+  line-height: 1;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Enlace de texto con subrayado que se dibuja (transform, 60fps) */
+.link-underline {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-grafito);
+}
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 1px;
+  background-color: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.link-underline:hover::after,
+.link-underline:focus-visible::after {
+  transform: scaleX(1);
+}
+/* Variante con el subrayado en acento (el texto sigue en grafito) */
+.link-acento::after {
+  background-color: var(--color-terracota);
+}
+/* En un dispositivo sin puntero fino no hay hover, así que el subrayado del
+   acento nunca llegaría a dibujarse: ahí se muestra ya trazado. Con ratón
+   sigue animándose al pasar por encima. */
+@media (hover: none), (pointer: coarse) {
+  .link-acento::after {
+    transform: scaleX(1);
+  }
+}
+
+/* --- Acento terracota -----------------------------------------
+   Uso deliberadamente escaso: números de Pilares y de los niveles de Planos,
+   línea de foco de los campos del formulario y subrayado del enlace del hero.
+   Dos tonos porque el terracota base no cumple AA sobre el grafito. */
+.acento {
+  color: var(--color-terracota);
+}
+.acento-claro {
+  color: var(--color-terracota-claro);
+}
+
+/* Reveal por líneas: máscara con overflow y desplazamiento vertical */
+.reveal-line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em; /* evita recortar trazos descendentes */
+}
+.reveal-inner {
+  display: block;
+  will-change: transform;
+}
+
+/* ============================================================
+   Header
+   ============================================================ */
+
+.site-header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 50;
+  height: var(--header-h);
+}
+/* El fondo translúcido y su desenfoque viven en una capa propia, NO en el
+   header: un backdrop-filter sobre el header lo convertiría en bloque
+   contenedor de sus descendientes position: fixed, y el menú móvil (inset: 0)
+   quedaría recortado a la altura de la barra. */
+.site-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-color: transparent;
+  border-bottom: 1px solid transparent;
+  transition: background-color 0.4s ease, border-color 0.4s ease,
+    backdrop-filter 0.4s ease, box-shadow 0.4s ease;
+}
+.site-header[data-scrolled="true"]::before {
+  background-color: color-mix(in srgb, var(--color-blanco) 82%, transparent);
+  backdrop-filter: saturate(1.1) blur(10px);
+  -webkit-backdrop-filter: saturate(1.1) blur(10px);
+  border-bottom-color: var(--color-linea);
+  box-shadow: 0 1px 0 0 rgba(26, 25, 23, 0.02);
+}
+
+/* --- Menú móvil: panel desplegable colgado del header ---------
+   El envoltorio es una ventana con overflow oculto y la ALTURA JUSTA de su
+   contenido (nunca a pantalla completa). El panel de dentro vive desplazado
+   -100% y baja a su sitio: así se anima sólo con transform y opacidad, sin
+   deformar el texto (que es lo que pasaría escalando el panel en vertical).
+   Va en position: absolute respecto al header —que es fixed—, de modo que
+   ningún backdrop-filter puede volver a recortarlo. */
+.mobile-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 60;
+  overflow: hidden;
+  pointer-events: none;
+}
+.mobile-menu[data-open="true"] {
+  pointer-events: auto;
+}
+.mobile-menu-panel {
+  background-color: var(--color-grafito);
+  color: var(--color-hueso);
+  /* Red de seguridad para ventanas muy bajas (móvil en apaisado): el panel
+     nunca llega al borde inferior y, si aun así no cupiera, se desplaza por
+     dentro sin arrastrar la página. */
+  max-height: calc(100svh - var(--header-h) - 16px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  transform: translateY(-100%);
+  opacity: 0;
+  transition: transform 0.44s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.26s ease;
+}
+.mobile-menu[data-open="true"] .mobile-menu-panel {
+  transform: translateY(0);
+  opacity: 1;
+  /* Al replegarse, la misma curva invertida y algo más rápida */
+  transition: transform 0.44s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.2s ease;
+}
+
+/* Velo sobre el resto de la página (nunca sobre la barra del header) */
+.mobile-veil {
+  position: fixed;
+  inset: var(--header-h) 0 0 0;
+  z-index: 58;
+  background-color: color-mix(in srgb, var(--color-grafito) 32%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.32s ease;
+}
+.mobile-veil[data-open="true"] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mobile-menu-lista {
+  list-style: none;
+  border-top: 1px solid var(--tono-filete, rgba(245, 243, 239, 0.18));
+}
+.mobile-menu-link {
+  display: flex;
+  align-items: center;
+  min-height: 52px; /* área táctil holgada, por encima del mínimo de 44px */
+  font-family: var(--font-display);
+  font-size: clamp(1.375rem, 5.2vw, 1.75rem);
+  line-height: 1.2;
+  color: var(--color-hueso);
+  border-bottom: 1px solid var(--tono-filete, rgba(245, 243, 239, 0.18));
+  transition: color 0.3s ease;
+}
+.mobile-menu-link:hover {
+  color: var(--color-terracota-claro);
+}
+.mobile-menu-pie {
+  color: var(--tono-etiqueta, rgba(245, 243, 239, 0.74));
+}
+/* Ventanas bajas (móvil en apaisado): se comprime lo justo para que los cinco
+   enlaces quepan sin desplazamiento interno, sin bajar de 44px de área táctil. */
+@media (max-height: 480px) {
+  .mobile-menu-link {
+    min-height: 44px;
+    font-size: 1.125rem;
+  }
+}
+
+/* --- Bloqueo de scroll (menú móvil y visor de galería) ---------
+   Se compensa el hueco de la barra de desplazamiento clásica para que ni la
+   página ni el header fijo den un salto lateral al bloquear. En pantallas
+   táctiles la barra es superpuesta y --sb-comp vale 0. */
+/* El bloqueo va en el ELEMENTO RAÍZ, no sólo en el body: con `overflow`
+   declarado sólo en el body, Chrome sigue desplazando el viewport (medido:
+   12.514 px de recorrido disponibles con el menú abierto). */
+html[data-scroll-bloqueado="true"],
+html[data-scroll-bloqueado="true"] body {
+  overflow: hidden;
+}
+html[data-scroll-bloqueado="true"] body {
+  padding-right: var(--sb-comp, 0px);
+}
+html[data-scroll-bloqueado="true"] .site-header {
+  padding-right: var(--sb-comp, 0px);
+}
+
+/* --- Barra de progreso de lectura -----------------------------
+   Vive DENTRO de .site-header (posicionado), colgada de su borde inferior:
+   así queda por encima del contenido (el header es z-50) y por debajo del
+   menú móvil desplegado (z-60 dentro del mismo contexto de apilado).
+   Se rellena sólo con transform: scaleX (nunca width) → sin reflujo. */
+.progress {
+  position: absolute;
+  top: var(--header-h);
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 55;
+  pointer-events: none;
+  overflow: hidden;
+  /* Carril: aparece sólo cuando el header ya tiene fondo (al bajar), para no
+     dibujar un filete sobre la fotografía del hero. Da al indicador su propia
+     "vía", de modo que se lee como barra y no como un borde más del header. */
+  background-color: transparent;
+  transition: background-color 0.45s ease;
+}
+.site-header[data-scrolled="true"] .progress {
+  background-color: color-mix(in srgb, var(--color-grafito) 12%, transparent);
+}
+.site-header[data-scrolled="true"] .progress[data-sobre="oscuro"] {
+  background-color: color-mix(in srgb, var(--color-hueso) 22%, transparent);
+}
+.progress-bar {
+  height: 100%;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background-color: var(--color-grafito);
+  will-change: transform;
+  /* Sólo el color transiciona; el avance lo fija el rAF fotograma a fotograma */
+  transition: background-color 0.45s ease;
+}
+/* Sobre secciones oscuras (Ficha técnica y pie) la barra se aclara */
+.progress[data-sobre="oscuro"] .progress-bar {
+  background-color: var(--color-hueso);
+}
+
+/* ============================================================
+   Hero
+   ============================================================ */
+
+.hero {
+  position: relative;
+  width: 100%;
+  min-height: 100svh;
+}
+
+.hero-text {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  padding-top: calc(var(--header-h) + 28px);
+  padding-bottom: 28px;
+  padding-inline: var(--margin-x) clamp(24px, 3vw, 56px);
+}
+
+/* La columna de texto es su propio container: el titular se dimensiona
+   con cqi para NO desbordar nunca su ancho, a cualquier viewport. */
+.hero-copy {
+  container-type: inline-size;
+  /* El bloque de texto se sitúa alto, con un respiro medido bajo la etiqueta; el
+     aire sobrante se traslada abajo (el dato técnico queda anclado al pie con
+     margin-top:auto en .hero-data). */
+  margin-top: clamp(16px, 4vh, 44px);
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.5rem, 13cqi, 6.25rem);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  color: var(--color-grafito);
+}
+
+.hero-media {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-piedra);
+}
+
+/* Encuadre de la fotografía: prioriza el volumen de piedra caliza y el cielo,
+   desplazando el recorte hacia la parte superior de la imagen. */
+.hero-img {
+  object-position: 50% 18%;
+}
+
+/* Lift claro muy sutil en la parte superior de la imagen: levanta las zonas
+   oscuras (palmera, celosías) lo justo para que la navegación en grafito
+   cumpla AA sobre toda la franja. Sólo sobre la imagen (nunca la columna
+   blanca), se desvanece por completo. Sólo escritorio. */
+.hero-toplift {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 152px;
+  /* Meseta corta (0,24) sólo en la franja del nav (≤56px) y desvanecido
+     después: el mínimo imprescindible para AA sobre la zona más oscura sin
+     lavar la parte alta de la fotografía. */
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-blanco) 24%, transparent) 0,
+    color-mix(in srgb, var(--color-blanco) 24%, transparent) 56px,
+    transparent 152px
+  );
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Arista vertical (escritorio): filete de 1px que se dibuja de arriba abajo.
+   Situado en el espacio en blanco entre el texto y la imagen (se lee como
+   línea dibujada, no como borde de la foto). */
+.hero-arista {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--hero-split) - 20px);
+  width: 1px;
+  background-color: var(--color-arista);
+  transform-origin: top center;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Marca horizontal corta (16px) que cruza la arista a la altura de la línea
+   base del titular: la convierte en una línea trazada, intencionada. La
+   posición vertical (top) la fija el JS; 46% es un valor de reserva. */
+.hero-arista-tick {
+  position: absolute;
+  top: 46%;
+  left: calc(var(--hero-split) - 20px);
+  width: 16px;
+  height: 1px;
+  background-color: var(--color-arista);
+  transform: translateX(-50%);
+  transform-origin: center;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Arista horizontal (móvil): filete sobre la imagen */
+.hero-arista-h {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: var(--color-arista);
+  transform-origin: left center;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* --- Indicador de scroll del hero ------------------------------
+   Filete vertical de 1px con un segmento opaco que lo recorre de arriba
+   abajo en bucle lento: sugiere el descenso sin gritarlo. Sólo transform.
+   Se desvanece en cuanto el usuario baja y no vuelve. */
+.hero-scroll {
+  position: relative;
+  display: block;
+  width: 1px;
+  height: 40px;
+  margin-top: 28px;
+  background-color: var(--color-arista);
+  overflow: hidden;
+  opacity: 1;
+  transition: opacity 0.5s ease;
+}
+.hero-scroll[data-oculto="true"] {
+  opacity: 0;
+}
+.hero-scroll-seg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 13px;
+  background-color: var(--color-grafito);
+  transform: translateY(-13px);
+  animation: hero-scroll-desliza 2.9s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  will-change: transform;
+}
+@keyframes hero-scroll-desliza {
+  0% {
+    transform: translateY(-13px);
+  }
+  55% {
+    transform: translateY(40px);
+  }
+  100% {
+    transform: translateY(40px);
+  }
+}
+/* Sin movimiento: el segmento se queda centrado y quieto (la regla global de
+   reduced-motion sólo acorta la animación, y la dejaría fuera de cuadro). */
+@media (prefers-reduced-motion: reduce) {
+  .hero-scroll-seg {
+    animation: none !important;
+    transform: translateY(13px);
+  }
+}
+
+/* --- Escritorio: split asimétrico 5 / 7 --- */
+@media (min-width: 1024px) {
+  .hero {
+    display: grid;
+    grid-template-columns: var(--hero-split) 1fr;
+    align-items: stretch;
+  }
+  .hero-media {
+    height: 100svh;
+  }
+  .hero-arista-h {
+    display: none;
+  }
+  /* El dato técnico queda anclado al pie; el aire sobrante se acumula aquí */
+  .hero-data {
+    margin-top: auto;
+    padding-top: 40px;
+  }
+}
+
+/* --- Móvil / tablet: apilado, versión aligerada --- */
+@media (max-width: 1023.98px) {
+  .hero {
+    display: flex;
+    flex-direction: column;
+  }
+  .hero-text {
+    min-height: auto;
+    order: 1;
+  }
+  .hero-copy {
+    margin-block: 0;
+    margin-top: clamp(24px, 8vh, 72px);
+  }
+  .hero-data {
+    margin-top: 40px;
+  }
+  .hero-media {
+    order: 2;
+    height: 46svh;
+    min-height: 300px;
+  }
+  .hero-arista,
+  .hero-toplift,
+  .hero-arista-tick {
+    display: none;
+  }
+}
+
+/* ============================================================
+   Secciones editoriales (Esencia · Visión · Pilares)
+   El "hilo conductor": filetes finos que se dibujan al hacer scroll,
+   en el mismo tono que la arista del hero (--color-arista).
+   ============================================================ */
+
+/* Filete horizontal que se dibuja de izquierda a derecha (scaleX) */
+.hairline {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background-color: var(--color-arista);
+  transform-origin: left center;
+}
+
+.line-wrap {
+  position: relative;
+}
+
+/* Marca vertical corta (16px) que cruza el filete — lenguaje de la arista */
+.hairline-tick {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  margin-top: -8px;
+  width: 1px;
+  height: 16px;
+  background-color: var(--color-arista);
+  transform-origin: center;
+}
+
+/* Marco de imagen: la máscara (clip-path) la anima GSAP */
+.media-frame {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-piedra);
+}
+
+/* Esencia — respiro contenido: la frase manda, el aire la acompaña */
+.esencia {
+  min-height: 55svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: var(--space-section);
+}
+
+/* Visión — imagen a sangre (altura fluida, object-cover + parallax) */
+.vision-media {
+  height: 80svh;
+  min-height: 420px;
+}
+@media (max-width: 1023.98px) {
+  .vision-media {
+    height: 60svh;
+    min-height: 340px;
+  }
+}
+
+/* Visión — panel de datos que se superpone a la fotografía a sangre.
+   Es la única capa del sitio: un bloque sólido en grafito que cruza el borde
+   superior de la foto, con una parte sobre el blanco de la sección y otra
+   sobre la imagen. Fondo y tonos: ver «Superficies oscuras». */
+.vision-media-wrap {
+  position: relative;
+}
+.vision-panel {
+  padding: clamp(24px, 2.6vw, 38px) clamp(22px, 2.4vw, 34px);
+}
+.vision-datos {
+  list-style: none;
+  border-top: 1px solid var(--tono-filete);
+}
+.vision-dato {
+  padding-block: 8px;
+  color: var(--tono-dato);
+}
+.vision-dato + .vision-dato {
+  border-top: 1px solid var(--tono-filete);
+}
+
+@media (min-width: 1024px) {
+  /* La capa se ancla al borde superior de la foto y reproduce la retícula:
+     el panel ocupa las columnas 9-12, así queda un canto de fotografía a su
+     derecha y se lee como panel incrustado, no como esquina tapada. */
+  .vision-panel-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    margin-inline: auto;
+    max-width: var(--container-max);
+    padding-inline: var(--margin-x);
+    pointer-events: none;
+  }
+  .vision-panel {
+    pointer-events: auto;
+    /* Sube por encima del borde de la foto sin llegar a tocar el filete que
+       cierra la retícula (hay 64px de aire entre ambos). */
+    margin-top: calc(-1 * clamp(44px, 4vw, 58px));
+  }
+}
+
+/* ============================================================
+   Declaración — sección a sangre, texto sobre la imagen
+   ============================================================ */
+
+.declaracion {
+  position: relative;
+  height: 100svh;
+  min-height: 560px;
+  display: flex;
+  overflow: hidden;
+  background-color: var(--color-grafito);
+}
+
+/* Velo LATERAL desde la izquierda: el texto se apoya sobre la zona naturalmente
+   oscura de la foto (el volumen en sombra y la vegetación de la izquierda), así
+   que basta oscurecer esa franja y dejar el mar/cielo de la derecha intactos
+   (foto más luminosa que antes). Máx ≈0,40 en el borde izquierdo; una pizca de
+   refuerzo inferior-izquierdo para la etiqueta. Verificado AA con píxeles
+   reales del render. */
+.declaracion-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    /* refuerzo local de la esquina inferior-izquierda: el botón y la etiqueta
+       son texto pequeño (AA 4,5) y caen sobre la maceta y el pavimento claro;
+       un grounding difuminado ahí evita subir el velo general. */
+    radial-gradient(
+      52% 52% at 3% 86%,
+      rgba(16, 15, 14, 0.42) 0%,
+      rgba(16, 15, 14, 0.14) 54%,
+      rgba(16, 15, 14, 0) 78%
+    ),
+    /* degradado lateral desde la izquierda (tras la frase). Máx ≈0,42 en el
+       borde: lo mínimo para AA sobre el pilar blanco al sol que la frase cruza.
+       Se desvanece antes del mar/cielo, que quedan intactos (foto luminosa). */
+    linear-gradient(
+      to right,
+      rgba(16, 15, 14, 0.42) 0%,
+      rgba(16, 15, 14, 0.4) 30%,
+      rgba(16, 15, 14, 0.32) 44%,
+      rgba(16, 15, 14, 0.12) 58%,
+      rgba(16, 15, 14, 0) 72%
+    );
+}
+
+.declaracion-inner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.declaracion-frase {
+  font-family: var(--font-display);
+  font-weight: 400;
+  color: var(--color-blanco);
+  font-size: clamp(2.15rem, 1.2rem + 4.4vw, 4.75rem);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  max-width: 19ch;
+  text-wrap: balance;
+  text-shadow: 0 1px 22px rgba(16, 15, 14, 0.5);
+}
+
+/* Botón pill: borde fino blanco, relleno transparente */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  min-height: 48px;
+  padding: 0 1.6em;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 999px;
+  color: var(--color-blanco);
+  font-family: var(--font-sans);
+  font-size: var(--text-nav);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  background-color: transparent;
+  cursor: pointer;
+  transition: background-color 0.4s ease, border-color 0.4s ease,
+    color 0.4s ease;
+}
+.pill:hover,
+.pill:focus-visible {
+  background-color: var(--color-blanco);
+  border-color: var(--color-blanco);
+  color: var(--color-grafito);
+}
+.pill .pill-arrow {
+  display: block;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.pill:hover .pill-arrow,
+.pill:focus-visible .pill-arrow {
+  transform: translateY(3px);
+}
+
+/* Etiqueta discreta, esquina inferior izquierda. Sobre el pavimento claro de
+   la piscina, un respaldo oscuro muy difuminado (sin caja dura) le garantiza
+   AA de forma local, sin recargar el resto de la fotografía. */
+.declaracion-label {
+  position: absolute;
+  z-index: 2;
+  left: calc(var(--margin-x) - 22px);
+  bottom: clamp(16px, 4vh, 36px);
+  padding: 8px 22px;
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-size: clamp(0.75rem, 0.72rem + 0.16vw, 0.8125rem);
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  background: radial-gradient(
+    135% 185% at 50% 52%,
+    rgba(16, 15, 14, 0.5) 0%,
+    rgba(16, 15, 14, 0.4) 62%,
+    rgba(16, 15, 14, 0.16) 86%,
+    rgba(16, 15, 14, 0) 100%
+  );
+}
+
+@media (max-width: 1023.98px) {
+  .declaracion {
+    height: 88svh;
+    min-height: 480px;
+  }
+  /* En móvil la foto se recorta al centro (cielo/mar claros) y el texto ocupa
+     casi todo el ancho en la mitad inferior: el degradado lateral no sirve.
+     Se usa un velo INFERIOR que oscurece la banda del texto y deja el cielo
+     de arriba intacto. Verificado AA con píxeles reales. */
+  .declaracion-veil {
+    background: linear-gradient(
+      to bottom,
+      rgba(16, 15, 14, 0) 0%,
+      rgba(16, 15, 14, 0.12) 28%,
+      rgba(16, 15, 14, 0.4) 46%,
+      rgba(16, 15, 14, 0.5) 60%,
+      rgba(16, 15, 14, 0.46) 80%,
+      rgba(16, 15, 14, 0.5) 100%
+    );
+  }
+}
+
+/* ============================================================
+   Planos — diagrama de sección sobre fondo GRAFITO (blueprint)
+   Colores invertidos: el dibujo técnico se lee en claro sobre oscuro, que es
+   el lenguaje nativo del plano. Fondo y tonos: ver «Superficies oscuras».
+   ============================================================ */
+.planos-eyebrow {
+  color: var(--tono-eyebrow);
+}
+.planos-title {
+  color: var(--color-hueso);
+}
+.planos-lede {
+  color: var(--tono-lede);
+}
+
+.planos-diagram {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+/* Trazos claros. En claro sobre oscuro un filete de 1px se percibe algo más
+   fino (el antialias juega en contra), así que se compensa a 1,2px reales;
+   non-scaling-stroke los mantiene idénticos a cualquier escala. */
+.planos-diagram .d-stroke {
+  fill: none;
+  stroke: var(--color-hueso);
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.planos-diagram .d-guide {
+  stroke: var(--color-hueso);
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+}
+/* Línea discontinua (eje de vista) — mismo hueso, patrón de guiones */
+.planos-diagram .d-dash {
+  fill: none;
+  stroke: var(--color-hueso);
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 5 4;
+}
+/* Retícula técnica de fondo, casi imperceptible sobre el grafito */
+.planos-diagram .d-grid line {
+  stroke: var(--color-hueso);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.1;
+}
+/* Texto del diagrama: hereda el aspecto de .label; el tamaño va en unidades del
+   viewBox (px = unidades de usuario) para escalar con el dibujo. */
+.planos-diagram text {
+  fill: var(--color-hueso);
+}
+/* Los cuerpos van en unidades del viewBox: al pasar el diagrama de 7 a 6
+   columnas (para dar aire al titular mayor) se compensan ×1,15, de modo que
+   el texto se sigue renderizando al mismo tamaño real que antes. */
+.planos-diagram .tlabel {
+  font-size: 16px;
+}
+.planos-diagram .tcota {
+  font-size: 13px;
+  fill: var(--tono-etiqueta);
+}
+/* Cota parcial (12 m): deliberadamente menor y en horizontal, para que no se
+   confunda con la cota total del desnivel. */
+.planos-diagram .tcota2 {
+  font-size: 11px;
+  fill: var(--tono-etiqueta);
+}
+
+/* Bloque de niveles (datos) separados por filetes claros translúcidos */
+.planos-niveles {
+  list-style: none;
+  border-top: 1px solid var(--tono-filete);
+}
+.planos-nivel {
+  padding-block: 10px;
+  color: var(--tono-etiqueta);
+}
+.planos-nivel + .planos-nivel {
+  border-top: 1px solid var(--tono-filete);
+}
+@media (max-width: 1023.98px) {
+  /* En móvil el SVG se dibuja más pequeño → se agranda el texto para que siga
+     siendo legible a 375px. */
+  .planos-diagram .tlabel {
+    font-size: 19px;
+  }
+  .planos-diagram .tcota {
+    font-size: 16px;
+  }
+  .planos-diagram .tcota2 {
+    font-size: 14px;
+  }
+}
+
+/* ============================================================
+   Galería — retícula editorial asimétrica y densa
+   ============================================================ */
+.gal-figure {
+  margin: 0;
+}
+.gal-cap {
+  margin-top: clamp(10px, 1.4vw, 16px);
+}
+
+/* --- Fila 1: díptico. Las dos fotos comparten arista, sin calle ------------
+   Los anchos NO son arbitrarios: 68,085 % / 31,915 % es la única partición
+   para la que una imagen 16/10 y otra 3/4 resultan EXACTAMENTE de la misma
+   altura (a/1,6 = (1−a)/0,75). Así se tocan a ras sin recortar ni deformar
+   ninguna de las dos: cada una se muestra en su propia proporción. */
+.gal-diptico {
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}
+@media (min-width: 1024px) {
+  .gal-diptico {
+    display: grid;
+    grid-template-columns: 68.085% 31.915%;
+    column-gap: 0;
+    align-items: start;
+  }
+}
+
+/* --- Fila 3: la horizontal sangra hasta el borde de la ventana ------------
+   Rompe el margen de la página por la izquierda sin salirse de la retícula:
+   el desplazamiento es el margen lateral más la banda que sobra cuando la
+   ventana supera el ancho máximo del contenedor. El pie NO se desplaza. */
+.gal-bleed-left .media-frame {
+  margin-left: calc(
+    -1 *
+      (
+        var(--margin-x) +
+          (var(--ancho-util) - min(var(--ancho-util), var(--container-max))) / 2
+      )
+  );
+}
+@media (max-width: 1023.98px) {
+  /* Apilada: sangra por los dos lados → ancho completo de ventana */
+  .gal-bleed-left .media-frame {
+    margin-right: calc(-1 * var(--margin-x));
+  }
+}
+
+/* ============================================================
+   Ficha técnica — tabla de datos editorial (fondo GRAFITO)
+   Respiro oscuro a mitad del recorrido: misma composición, colores
+   invertidos. El paso de blanco a grafito (y de grafito a blanco al salir
+   hacia Entorno) es un CORTE LIMPIO, sin banda de transición ni degradado.
+   ============================================================ */
+/* Jerarquía de texto invertida (fondo y tonos: ver «Superficies oscuras») */
+.ficha-eyebrow {
+  color: var(--tono-eyebrow);
+}
+.ficha-title {
+  color: var(--color-hueso);
+}
+.ficha-lede {
+  color: var(--tono-lede);
+}
+.ficha-etiqueta {
+  color: var(--tono-etiqueta);
+}
+.ficha-tabla {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+/* Cada fila: etiqueta a la izquierda, valor (serif) a la derecha, separadas por
+   un filete fino que se dibuja de izquierda a derecha al entrar. */
+.ficha-fila {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding-block: clamp(11px, 1.5vw, 17px);
+}
+/* Filete claro translúcido (misma altura de 1px y mismo dibujado por scaleX) */
+.ficha-filete {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 1px;
+  background-color: var(--tono-filete);
+  transform-origin: left center;
+}
+.ficha-valor {
+  flex: none;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.125rem, 1rem + 0.6vw, 1.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--color-hueso);
+  text-align: right;
+}
+.ficha-nota {
+  margin-top: clamp(16px, 2vw, 24px);
+  text-align: right;
+  color: var(--tono-nota);
+}
+
+/* ============================================================
+   Entorno — dos fotografías escalonadas + franja de tiempos
+   ============================================================ */
+.entorno-cap {
+  margin-top: clamp(10px, 1.4vw, 16px);
+}
+/* Franja de tiempos: cuatro cifras grandes (serif) con filetes verticales */
+.entorno-tiempos {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--color-linea);
+}
+.entorno-tiempo {
+  position: relative;
+  padding: clamp(22px, 3vw, 38px) clamp(10px, 1.6vw, 24px);
+  text-align: center;
+}
+/* Filete vertical que separa las columnas (se dibuja con scaleY en GSAP) */
+.entorno-vfilete {
+  position: absolute;
+  left: 0;
+  top: 16%;
+  width: 1px;
+  height: 68%;
+  background-color: var(--color-linea);
+  transform-origin: top center;
+}
+.entorno-num {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.75rem, 1.8rem + 3.4vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--color-grafito);
+  font-variant-numeric: tabular-nums;
+}
+.entorno-tiempo-label {
+  display: block;
+  margin-top: clamp(8px, 1vw, 12px);
+  color: var(--color-gris);
+}
+@media (max-width: 767.98px) {
+  /* Móvil: lista vertical, filetes horizontales entre entradas */
+  .entorno-tiempos {
+    grid-template-columns: 1fr;
+  }
+  .entorno-tiempo {
+    padding-block: clamp(18px, 5vw, 26px);
+    border-top: 1px solid var(--color-linea);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    text-align: left;
+    gap: 1rem;
+  }
+  .entorno-tiempo:first-child {
+    border-top: 0;
+  }
+  .entorno-vfilete {
+    display: none;
+  }
+  .entorno-tiempo-label {
+    margin-top: 0;
+    text-align: right;
+  }
+}
+
+/* ============================================================
+   Contacto — formulario editorial (líneas inferiores finas)
+   ============================================================ */
+.contacto-datos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--color-linea);
+}
+.contacto-dato {
+  padding-block: 11px;
+  color: var(--color-gris);
+}
+.contacto-dato + .contacto-dato {
+  border-top: 1px solid var(--color-linea);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  row-gap: clamp(20px, 2.4vw, 30px);
+}
+.field {
+  position: relative;
+}
+.field.field-full {
+  grid-column: 1 / -1;
+}
+.field-label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--color-gris);
+}
+.field-req {
+  color: var(--color-terracota);
+}
+.field-control {
+  width: 100%;
+  background-color: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--color-linea-fuerte);
+  border-radius: 0;
+  padding: 10px 0;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.4;
+  color: var(--color-grafito);
+  caret-color: var(--color-grafito);
+  /* Sin apariencia nativa del sistema (fondos, sombras internas del OS) */
+  appearance: none;
+  -webkit-appearance: none;
+  transition: border-color 0.35s ease, box-shadow 0.35s ease;
+}
+.field-control::placeholder {
+  color: color-mix(in srgb, var(--color-gris) 66%, transparent);
+}
+/* Foco: SIN recuadro nativo. El indicador visible/accesible es la propia línea
+   inferior, que se pone grafito y gana grosor (2px, vía box-shadow → sin reflujo
+   ni caja rectangular). Válido con ratón y con teclado. */
+.field-control:focus {
+  outline: none;
+  border-bottom-color: var(--color-terracota);
+  box-shadow: 0 1px 0 0 var(--color-terracota);
+}
+/* Neutraliza el autofill de Chrome (fondo azul/amarillo) conservando el texto
+   en grafito; la sombra interna blanca "tapa" el color del autorelleno y la
+   transición larguísima impide que reaparezca. */
+.field-control:-webkit-autofill,
+.field-control:-webkit-autofill:hover,
+.field-control:-webkit-autofill:focus,
+.field-control:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--color-grafito);
+  -webkit-box-shadow: 0 0 0 1000px var(--color-blanco) inset;
+  box-shadow: 0 0 0 1000px var(--color-blanco) inset;
+  caret-color: var(--color-grafito);
+  transition: background-color 100000s ease-in-out 0s;
+}
+textarea.field-control {
+  resize: vertical;
+  min-height: 96px;
+}
+.field[data-error="true"] .field-control {
+  border-bottom-color: var(--color-terracota);
+}
+
+/* Control propio de "Tipo de visita" (segmented / radiogroup accesible) */
+.segmented {
+  display: inline-flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.seg-option {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 20px;
+  border: 1px solid var(--color-linea);
+  border-radius: 999px;
+  background-color: transparent;
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  line-height: 1.4;
+  color: var(--color-gris);
+  cursor: pointer;
+  transition: color 0.3s ease, background-color 0.3s ease,
+    border-color 0.3s ease;
+}
+.seg-option[aria-checked="true"] {
+  color: var(--color-grafito);
+  background-color: color-mix(in srgb, var(--color-piedra) 60%, transparent);
+  border-color: color-mix(in srgb, var(--color-piedra) 90%, transparent);
+}
+.seg-option:hover {
+  color: var(--color-grafito);
+}
+.seg-option:focus-visible {
+  outline: 2px solid var(--color-grafito);
+  outline-offset: 3px;
+}
+.field-error {
+  margin-top: 6px;
+  color: var(--color-terracota);
+}
+.form-submit {
+  width: 100%;
+  justify-content: center;
+  color: var(--color-grafito);
+  border-color: var(--color-linea-fuerte);
+}
+.form-submit:hover,
+.form-submit:focus-visible {
+  background-color: var(--color-grafito);
+  border-color: var(--color-grafito);
+  color: var(--color-blanco);
+}
+/* Confirmación tras enviar */
+.form-gracias {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.25rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--color-grafito);
+  text-wrap: balance;
+}
+.fade-swap {
+  animation: fadeSwap 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes fadeSwap {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (max-width: 767.98px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+   Footer + firma Vertex (efecto Vaporize)
+   ============================================================ */
+/* Footer OSCURO: cierre visual del sitio sobre fondo grafito, con corte limpio
+   de blanco a grafito (sin banda de degradado). Textos en hueso para AA holgado;
+   filetes en versión clara translúcida. */
+.footer {
+  position: relative;
+  background-color: var(--color-grafito);
+  color: var(--color-hueso);
+}
+.footer-cierre {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.375rem, 1.1rem + 1vw, 1.875rem);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--color-hueso);
+  text-wrap: balance;
+}
+.footer-col-title {
+  color: color-mix(in srgb, var(--color-hueso) 56%, transparent);
+  margin-bottom: clamp(14px, 1.6vw, 20px);
+}
+.footer-legal-links {
+  list-style: none;
+  margin: clamp(16px, 2vw, 24px) 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+}
+.footer-legal-links a {
+  color: color-mix(in srgb, var(--color-hueso) 66%, transparent);
+  transition: color 0.3s ease;
+}
+.footer-legal-links a:hover {
+  color: var(--color-hueso);
+}
+.footer-wordmark {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(3rem, 9vw, 6.5rem);
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  color: var(--color-hueso);
+}
+.footer-index {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.footer-index a {
+  color: var(--color-hueso);
+  transition: color 0.3s ease;
+}
+.footer-index a:hover {
+  color: color-mix(in srgb, var(--color-hueso) 70%, var(--color-terracota));
+}
+.footer-contacto {
+  color: color-mix(in srgb, var(--color-hueso) 74%, transparent);
+}
+.footer-sep {
+  height: 1px;
+  width: 100%;
+  background-color: color-mix(in srgb, var(--color-hueso) 18%, transparent);
+}
+.footer-legal {
+  color: color-mix(in srgb, var(--color-hueso) 66%, transparent);
+  text-align: center;
+}
+
+.vertex {
+  position: relative;
+  width: 100%;
+  height: clamp(88px, 15vw, 168px);
+}
+.vertex-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+/* Texto accesible y de reserva: siempre presente (lo lee el lector de
+   pantalla); se oculta visualmente sólo mientras el canvas de partículas anima
+   y se vuelve a mostrar nítido al terminar (o si el canvas falla). */
+.vertex-word {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2rem, 7vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--color-hueso);
+  text-align: center;
+}
+.vertex[data-particles="true"] .vertex-word {
+  opacity: 0;
+}
+.vertex[data-particles="true"][data-done="true"] .vertex-word {
+  opacity: 1;
+  transition: opacity 0.6s ease;
+}
+.vertex[data-particles="true"][data-done="true"] .vertex-canvas {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+/* ============================================================
+   Visor de galería (lightbox)
+   Diálogo modal a pantalla completa sobre grafito casi opaco. La apertura y
+   el cierre se animan sólo con opacidad y transform.
+   ============================================================ */
+
+/* Cada fotografía de la galería es un botón: accionable con el dedo, con el
+   ratón y con el teclado (Enter y barra espaciadora), y con foco visible. */
+.gal-boton {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  /* Sin declarar fondo: lo pone .media-frame (piedra), que es lo que se ve
+     mientras la fotografía todavía no ha cargado. */
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: zoom-in;
+  -webkit-tap-highlight-color: transparent;
+}
+.gal-boton:focus-visible {
+  outline: 2px solid var(--color-grafito);
+  outline-offset: 3px;
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  /* Grafito casi opaco: el sitio de detrás queda insinuado, no visible */
+  background-color: color-mix(in srgb, var(--color-grafito) 97%, transparent);
+  opacity: 0;
+  transition: opacity 0.28s ease;
+}
+.lightbox[data-listo="true"] {
+  opacity: 1;
+}
+
+/* Zona de la imagen. touch-action: pinch-zoom deja el PELLIZCO en manos del
+   navegador (zoom nativo) y a la vez impide que el navegador se quede con el
+   arrastre de un dedo, que es el que usamos para pasar de foto y para cerrar. */
+.lightbox-lienzo {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: calc(var(--header-h) + 12px) var(--margin-x) 12px;
+  touch-action: pinch-zoom;
+}
+/* Ocupa toda la caja del lienzo para que la fotografía pueda crecer hasta
+   tocar sus bordes; el propio img se limita con max-* y no se recorta. */
+.lightbox-media {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  transform: scale(0.985);
+  transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.lightbox[data-listo="true"] .lightbox-media {
+  transform: scale(1);
+}
+/* La caja ocupa el lienzo entero y es `contain` quien encaja la fotografía:
+   dejarla en `width: auto` la dibujaba a su tamaño intrínseco, que con un
+   srcset de descriptores `w` viene dividido por la densidad (750 px en lugar
+   de 2000) y desaprovechaba media ventana. */
+.lightbox-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Pie y contador, discretos, en la parte inferior */
+.lightbox-barra {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 0 var(--margin-x) max(20px, env(safe-area-inset-bottom));
+  color: var(--tono-etiqueta);
+}
+.lightbox-pie {
+  margin: 0;
+  min-width: 0;
+}
+.lightbox-indice {
+  margin: 0;
+  flex: none;
+  color: var(--tono-eyebrow);
+}
+
+/* Controles: aspa y flechas. Área táctil de 48px en todos. */
+.lightbox-btn {
+  position: absolute;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  color: var(--color-hueso);
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity 0.25s ease;
+  opacity: 0.72;
+}
+.lightbox-btn:hover,
+.lightbox-btn:focus-visible {
+  opacity: 1;
+}
+.lightbox-cerrar {
+  top: max(8px, env(safe-area-inset-top));
+  right: calc(var(--margin-x) - 12px);
+}
+.lightbox-nav {
+  top: 50%;
+  margin-top: -24px;
+}
+.lightbox-prev {
+  left: calc(var(--margin-x) - 12px);
+}
+.lightbox-next {
+  right: calc(var(--margin-x) - 12px);
+}
+/* Las aspas y flechas son filetes de 1,5px: el mismo lenguaje de líneas */
+.lightbox-btn svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+}
+
+@media (max-width: 767.98px) {
+  /* En táctil se pasa de foto deslizando: las flechas laterales estorbarían
+     sobre la imagen, así que se ocultan. El aspa y el gesto siguen ahí. */
+  .lightbox-nav {
+    display: none;
+  }
+}
