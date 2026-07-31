@@ -86,15 +86,18 @@ export default function Declaracion() {
 
           tl = gsap.timeline({
             defaults: { ease: "power3.out" },
-            scrollTrigger: { trigger: el, start: "top 70%", once: true },
+            // Ya era el disparo más tardío del sitio a propósito (la frase va
+            // sobre una foto a pantalla completa): se retrasa la mitad que el
+            // resto, para conservar su posición relativa sin irse de rango.
+            scrollTrigger: { trigger: el, start: "top 62%", once: true },
           });
           tl.to(split.lines, {
             yPercent: 0,
-            duration: mobile ? 0.47 : 0.65,
-            stagger: mobile ? 0.06 : 0.1,
+            duration: mobile ? 0.62 : 0.86,
+            stagger: mobile ? 0.08 : 0.13,
           })
-            .to(cta, { autoAlpha: 1, y: 0, duration: 0.45 }, ">-0.15")
-            .to(label, { autoAlpha: 1, y: 0, duration: 0.45 }, "<0.08");
+            .to(cta, { autoAlpha: 1, y: 0, duration: 0.59 }, ">-0.2")
+            .to(label, { autoAlpha: 1, y: 0, duration: 0.59 }, "<0.11");
         });
 
         // Salvaguarda "fallar mostrando": si al entrar en pantalla el reveal no

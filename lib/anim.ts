@@ -37,7 +37,20 @@ export function armFailShowing(
   finalize: () => void,
   opts: { graceMs?: number; threshold?: number } = {}
 ): () => void {
-  const { graceMs = 1400, threshold = 0.01 } = opts;
+  // graceMs por defecto: 3200 ms. Va atado al punto de disparo de los reveals.
+  // La salvaguarda arranca su cuenta cuando la sección ASOMA (threshold 0.01),
+  // pero los triggers disparan entre "top 74%" y "top 58%": entre un momento y
+  // otro el elemento tiene que subir del 26 % al 42 % de la ventana. Con la
+  // espera anterior de 1400 ms —pensada para disparos en "top 86%"— la
+  // salvaguarda se adelantaba al trigger en scroll lento y revelaba el
+  // contenido sin animarlo.
+  //
+  // El caso más exigente es Declaración (42 % de hueco): a 700 px/s se cruza en
+  // ~0,9 s, pero un lector lento a 130 px/s tardaría ~2,6 s. Con 3200 ms queda
+  // cubierto hasta ~107 px/s. Alargar esta espera sólo retrasa el rescate de un
+  // fallo real —nunca adelanta un revelado—, así que se prefiere pasarse.
+  // Si algún día se adelanta el punto de disparo, puede volver a bajar.
+  const { graceMs = 3200, threshold = 0.01 } = opts;
 
   if (typeof IntersectionObserver === "undefined") {
     // Sin soporte: revela de inmediato si aún no ha animado (nunca esconder).

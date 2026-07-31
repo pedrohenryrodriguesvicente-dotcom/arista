@@ -70,13 +70,13 @@ export default function Entorno() {
         // Cabecera
         gsap.set(head, { autoAlpha: 0, y: 16 });
         const tlHead = gsap.timeline({
-          scrollTrigger: { trigger: el, start: "top 82%", once: true },
+          scrollTrigger: { trigger: el, start: "top 66%", once: true },
         });
         tlHead.to(head, {
           autoAlpha: 1,
           y: 0,
-          duration: 0.45,
-          stagger: 0.07,
+          duration: 0.59,
+          stagger: 0.09,
           ease: "power3.out",
         });
         timelines.push(tlHead);
@@ -94,14 +94,17 @@ export default function Entorno() {
 
           const tl = gsap.timeline({
             defaults: { ease: "power3.out" },
-            scrollTrigger: { trigger: el, start: "top 74%", once: true },
+            // La fotografía va DESPUÉS de la cabecera dentro de la sección, así
+            // que su disparo conserva los 8 puntos de retraso que ya tenía
+            // sobre ella (66 → 58) y mantiene el orden de la coreografía.
+            scrollTrigger: { trigger: el, start: "top 58%", once: true },
           });
           tl.to(frame, {
             clipPath: "inset(0% 0% 0% 0%)",
-            duration: mobile ? 0.6 : 0.82,
+            duration: mobile ? 0.79 : 1.08,
           })
-            .to(img, { scale: 1, duration: mobile ? 0.75 : 1 }, "<")
-            .to(cap, { autoAlpha: 1, y: 0, duration: 0.4 }, ">-0.32");
+            .to(img, { scale: 1, duration: mobile ? 0.99 : 1.32 }, "<")
+            .to(cap, { autoAlpha: 1, y: 0, duration: 0.53 }, ">-0.42");
           timelines.push(tl);
           figTimelines.push(tl);
 
@@ -135,7 +138,7 @@ export default function Entorno() {
           defaults: { ease: "power3.out" },
           scrollTrigger: {
             trigger: el.querySelector(".js-tiempos") ?? el,
-            start: "top 86%",
+            start: "top 70%",
             once: true,
             onEnter: () => {
               nums.forEach((n) => {
@@ -158,14 +161,14 @@ export default function Entorno() {
         tlTiempos
           .to(vfiletes, {
             scaleY: 1,
-            duration: mobile ? 0.4 : 0.5,
-            stagger: 0.05,
+            duration: mobile ? 0.53 : 0.66,
+            stagger: 0.07,
             ease: "power2.inOut",
           })
           .to(
             tiempos,
-            { autoAlpha: 1, y: 0, duration: 0.45, stagger: 0.06 },
-            "<0.05"
+            { autoAlpha: 1, y: 0, duration: 0.59, stagger: 0.08 },
+            "<0.07"
           );
         timelines.push(tlTiempos);
 

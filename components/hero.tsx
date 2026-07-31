@@ -119,13 +119,13 @@ export default function Hero() {
           const build = () => {
             const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-            // 1) La arista se dibuja (de arriba abajo en escritorio, 1,2s)
+            // 1) La arista se dibuja (de arriba abajo en escritorio)
             if (arista) {
               tl.to(
                 arista,
                 {
                   ...(isDesktop ? { scaleY: 1 } : { scaleX: 1 }),
-                  duration: isDesktop ? 0.85 : 0.65,
+                  duration: isDesktop ? 1.12 : 0.86,
                   ease: "power2.inOut",
                 },
                 0
@@ -133,13 +133,13 @@ export default function Hero() {
             }
 
             // La etiqueta entra durante el trazo de la línea
-            tl.to(eyebrowRef.current, { autoAlpha: 1, y: 0, duration: 0.45 }, 0.15);
+            tl.to(eyebrowRef.current, { autoAlpha: 1, y: 0, duration: 0.59 }, 0.2);
 
             // 2) Titular por líneas, DESPUÉS de que la arista termine
             tl.to(
               titleInners,
-              { yPercent: 0, duration: 0.65, stagger: 0.09 },
-              isDesktop ? ">-0.05" : 0.3
+              { yPercent: 0, duration: 0.86, stagger: 0.12 },
+              isDesktop ? ">-0.07" : 0.4
             );
 
             // 3) Párrafo — por líneas en escritorio, en bloque (aligerado) en móvil
@@ -160,12 +160,12 @@ export default function Hero() {
               gsap.set(split.lines, { yPercent: 115 });
               tl.to(
                 split.lines,
-                { yPercent: 0, duration: 0.58, stagger: 0.07 },
-                "<0.15"
+                { yPercent: 0, duration: 0.77, stagger: 0.09 },
+                "<0.2"
               );
             } else if (paraEl) {
               gsap.set(paraEl, { y: 18 });
-              tl.to(paraEl, { autoAlpha: 1, y: 0, duration: 0.5 }, "<0.1");
+              tl.to(paraEl, { autoAlpha: 1, y: 0, duration: 0.66 }, "<0.13");
             }
 
             // 4) La marca horizontal cruza la arista, justo después del trazo
@@ -173,14 +173,14 @@ export default function Hero() {
               positionTick();
               tl.to(
                 tickRef.current,
-                { scaleX: 1, duration: 0.36, ease: "power2.out" },
-                0.95
+                { scaleX: 1, duration: 0.48, ease: "power2.out" },
+                1.25
               );
             }
 
             // 5) CTA y dato técnico
-            tl.to(ctaRef.current, { autoAlpha: 1, y: 0, duration: 0.45 }, "<0.1");
-            tl.to(dataRef.current, { autoAlpha: 1, y: 0, duration: 0.45 }, "<0.08");
+            tl.to(ctaRef.current, { autoAlpha: 1, y: 0, duration: 0.59 }, "<0.13");
+            tl.to(dataRef.current, { autoAlpha: 1, y: 0, duration: 0.59 }, "<0.11");
           };
 
           // Espera a las fuentes para que las líneas midan bien (sin reflow)

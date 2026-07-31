@@ -54,9 +54,9 @@ export default function FichaTecnica() {
 
         const tlHead = gsap.timeline({
           defaults: { ease: "power3.out" },
-          scrollTrigger: { trigger: el, start: "top 84%", once: true },
+          scrollTrigger: { trigger: el, start: "top 68%", once: true },
         });
-        tlHead.to(head, { autoAlpha: 1, y: 0, duration: 0.45, stagger: 0.07 });
+        tlHead.to(head, { autoAlpha: 1, y: 0, duration: 0.59, stagger: 0.09 });
         timelines.push(tlHead);
 
         // Tabla: cada filete se dibuja y su fila entra, con un stagger corto
@@ -64,15 +64,15 @@ export default function FichaTecnica() {
           defaults: { ease: "power3.out" },
           scrollTrigger: {
             trigger: el.querySelector(".js-tabla") ?? el,
-            start: "top 82%",
+            start: "top 66%",
             once: true,
           },
         });
         tlTabla
           .to(filetes, {
             scaleX: 1,
-            duration: mobile ? 0.4 : 0.5,
-            stagger: mobile ? 0.04 : 0.055,
+            duration: mobile ? 0.53 : 0.66,
+            stagger: mobile ? 0.05 : 0.07,
             ease: "power2.inOut",
           })
           .to(
@@ -80,12 +80,12 @@ export default function FichaTecnica() {
             {
               autoAlpha: 1,
               y: 0,
-              duration: 0.4,
-              stagger: mobile ? 0.04 : 0.055,
+              duration: 0.53,
+              stagger: mobile ? 0.05 : 0.07,
             },
-            "<0.06"
+            "<0.08"
           )
-          .to(nota, { autoAlpha: 1, y: 0, duration: 0.4 }, ">-0.1");
+          .to(nota, { autoAlpha: 1, y: 0, duration: 0.53 }, ">-0.13");
         timelines.push(tlTabla);
 
         const finalize = () => {

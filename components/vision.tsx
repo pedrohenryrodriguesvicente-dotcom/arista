@@ -57,14 +57,14 @@ export default function Vision() {
         // A) Texto (izquierda + derecha)
         const tlText = gsap.timeline({
           defaults: { ease: "power3.out" },
-          scrollTrigger: { trigger: el, start: "top 86%", once: true },
+          scrollTrigger: { trigger: el, start: "top 70%", once: true },
         });
         tlText
-          .to(title, { yPercent: 0, duration: mobile ? 0.43 : 0.58 })
+          .to(title, { yPercent: 0, duration: mobile ? 0.57 : 0.77 })
           .to(
             copy,
-            { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.09 },
-            mobile ? ">-0.07" : "<0.15"
+            { autoAlpha: 1, y: 0, duration: 0.66, stagger: 0.12 },
+            mobile ? ">-0.09" : "<0.2"
           );
         timelines.push(tlText);
 
@@ -73,24 +73,24 @@ export default function Vision() {
         //    última, para que se lea como algo apoyado sobre la imagen).
         const tlMedia = gsap.timeline({
           defaults: { ease: "power3.out" },
-          scrollTrigger: { trigger: frame, start: "top 94%", once: true },
+          scrollTrigger: { trigger: frame, start: "top 78%", once: true },
         });
         tlMedia
           .to(line, {
             scaleX: 1,
-            duration: mobile ? 0.36 : 0.58,
+            duration: mobile ? 0.48 : 0.77,
             ease: "power2.inOut",
           })
           .to(
             frame,
-            { clipPath: "inset(0% 0% 0% 0%)", duration: mobile ? 0.58 : 0.72 },
-            mobile ? ">-0.07" : ">-0.12"
+            { clipPath: "inset(0% 0% 0% 0%)", duration: mobile ? 0.77 : 0.95 },
+            mobile ? ">-0.09" : ">-0.16"
           )
-          .to(img, { scale: 1, duration: mobile ? 0.65 : 0.86 }, "<")
+          .to(img, { scale: 1, duration: mobile ? 0.86 : 1.14 }, "<")
           .to(
             panel,
-            { autoAlpha: 1, y: 0, duration: mobile ? 0.5 : 0.62 },
-            mobile ? ">-0.3" : ">-0.42"
+            { autoAlpha: 1, y: 0, duration: mobile ? 0.66 : 0.82 },
+            mobile ? ">-0.4" : ">-0.55"
           );
         timelines.push(tlMedia);
 

@@ -83,9 +83,9 @@ export default function Contacto() {
 
         const tl = gsap.timeline({
           defaults: { ease: "power3.out" },
-          scrollTrigger: { trigger: el, start: "top 80%", once: true },
+          scrollTrigger: { trigger: el, start: "top 64%", once: true },
         });
-        tl.to(reveal, { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.06 });
+        tl.to(reveal, { autoAlpha: 1, y: 0, duration: 0.66, stagger: 0.08 });
 
         const finalize = () => gsap.set(reveal, { autoAlpha: 1, y: 0 });
         const disarm = armFailShowing(el, () => tl.progress() > 0, finalize);

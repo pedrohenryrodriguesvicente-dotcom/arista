@@ -60,25 +60,25 @@ export default function Esencia() {
 
           tl = gsap.timeline({
             defaults: { ease: "power3.out" },
-            scrollTrigger: { trigger: el, start: "top 86%", once: true },
+            scrollTrigger: { trigger: el, start: "top 70%", once: true },
           });
           // 1) etiqueta · 2) la línea se dibuja · 3) marca vertical ·
           // 4) la frase entra por líneas DESPUÉS de la línea
-          tl.to(label, { autoAlpha: 1, y: 0, duration: 0.36 })
+          tl.to(label, { autoAlpha: 1, y: 0, duration: 0.48 })
             .to(
               line,
-              { scaleX: 1, duration: mobile ? 0.36 : 0.65, ease: "power2.inOut" },
-              0.07
+              { scaleX: 1, duration: mobile ? 0.48 : 0.86, ease: "power2.inOut" },
+              0.09
             )
-            .to(tick, { scaleY: 1, duration: 0.22 }, ">-0.05")
+            .to(tick, { scaleY: 1, duration: 0.29 }, ">-0.07")
             .to(
               split.lines,
               {
                 yPercent: 0,
-                duration: mobile ? 0.4 : 0.55,
-                stagger: mobile ? 0.045 : 0.09,
+                duration: mobile ? 0.53 : 0.73,
+                stagger: mobile ? 0.06 : 0.12,
               },
-              ">-0.05"
+              ">-0.07"
             );
         });
 

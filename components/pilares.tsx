@@ -91,13 +91,13 @@ export default function Pilares() {
         );
         gsap.set(head, { autoAlpha: 0, y: 16 });
         const tlHead = gsap.timeline({
-          scrollTrigger: { trigger: el, start: "top 88%", once: true },
+          scrollTrigger: { trigger: el, start: "top 72%", once: true },
         });
         tlHead.to(head, {
           autoAlpha: 1,
           y: 0,
-          duration: 0.45,
-          stagger: 0.07,
+          duration: 0.59,
+          stagger: 0.09,
           ease: "power3.out",
         });
         timelines.push(tlHead);
@@ -119,28 +119,28 @@ export default function Pilares() {
 
           const tl = gsap.timeline({
             defaults: { ease: "power3.out" },
-            scrollTrigger: { trigger: row, start: "top 90%", once: true },
+            scrollTrigger: { trigger: row, start: "top 74%", once: true },
           });
           tl.to(line, {
             scaleX: 1,
-            duration: mobile ? 0.36 : 0.58,
+            duration: mobile ? 0.48 : 0.77,
             ease: "power2.inOut",
           })
             .to(
               frame,
-              { clipPath: "inset(0% 0% 0% 0%)", duration: mobile ? 0.54 : 0.68 },
-              mobile ? ">-0.07" : ">-0.12"
+              { clipPath: "inset(0% 0% 0% 0%)", duration: mobile ? 0.71 : 0.9 },
+              mobile ? ">-0.09" : ">-0.16"
             )
-            .to(img, { scale: 1, duration: mobile ? 0.61 : 0.83 }, "<")
+            .to(img, { scale: 1, duration: mobile ? 0.81 : 1.1 }, "<")
             .to(
               text,
               {
                 autoAlpha: 1,
                 y: 0,
-                duration: 0.45,
-                stagger: mobile ? 0.045 : 0.07,
+                duration: 0.59,
+                stagger: mobile ? 0.06 : 0.09,
               },
-              mobile ? "<0.07" : "<0.15"
+              mobile ? "<0.09" : "<0.2"
             );
           timelines.push(tl);
         });

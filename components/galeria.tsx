@@ -166,13 +166,13 @@ export default function Galeria() {
         // --- Cabecera ---
         gsap.set(head, { autoAlpha: 0, y: 16 });
         const tlHead = gsap.timeline({
-          scrollTrigger: { trigger: el, start: "top 82%", once: true },
+          scrollTrigger: { trigger: el, start: "top 66%", once: true },
         });
         tlHead.to(head, {
           autoAlpha: 1,
           y: 0,
-          duration: 0.45,
-          stagger: 0.07,
+          duration: 0.59,
+          stagger: 0.09,
           ease: "power3.out",
         });
         timelines.push(tlHead);
@@ -193,19 +193,19 @@ export default function Galeria() {
 
           const tl = gsap.timeline({
             defaults: { ease: "power3.out" },
-            scrollTrigger: { trigger: frame, start: "top 88%", once: true },
+            scrollTrigger: { trigger: frame, start: "top 72%", once: true },
           });
           tl.to(frame, {
             clipPath: "inset(0% 0% 0% 0%)",
-            duration: mobile ? 0.55 : 0.72,
+            duration: mobile ? 0.73 : 0.95,
           })
-            .to(img, { scale: 1, duration: mobile ? 0.7 : 0.9 }, "<")
+            .to(img, { scale: 1, duration: mobile ? 0.92 : 1.19 }, "<")
             .to(
               capline,
-              { scaleX: 1, duration: 0.5, ease: "power2.inOut" },
-              mobile ? ">-0.2" : ">-0.28"
+              { scaleX: 1, duration: 0.66, ease: "power2.inOut" },
+              mobile ? ">-0.26" : ">-0.37"
             )
-            .to(cap, { autoAlpha: 1, y: 0, duration: 0.4 }, ">-0.12");
+            .to(cap, { autoAlpha: 1, y: 0, duration: 0.53 }, ">-0.16");
           timelines.push(tl);
           figTimelines.push(tl);
 

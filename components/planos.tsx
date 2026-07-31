@@ -126,32 +126,35 @@ export default function Planos() {
           // Móvil: sin pin ni scrub. Se dibuja una vez al entrar, más corto.
           tl = gsap.timeline({
             defaults: { ease: "power1.out" },
-            scrollTrigger: { trigger: el, start: "top 82%", once: true },
+            scrollTrigger: { trigger: el, start: "top 66%", once: true },
             onStart: () => {
               played = true;
             },
           });
-          tl.to(grid, { autoAlpha: 1, duration: 0.25 }, 0)
-            .to(terrain, { strokeDashoffset: 0, duration: 0.7 }, 0.05)
-            .to(vols, { strokeDashoffset: 0, duration: 0.35, stagger: 0.14 }, ">-0.05")
-            .to(vols, { opacity: 1, duration: 0.4, stagger: 0.14, ease: "power2.out" }, "<")
-            .to(cota, { strokeDashoffset: 0, duration: 0.3, stagger: 0.04 }, ">-0.05")
-            .to(horizon, { strokeDashoffset: 0, duration: 0.3 }, ">-0.05")
-            .to(marks, { autoAlpha: 1, duration: 0.3, stagger: 0.03, ease: "power2.out" }, ">-0.05")
+          tl.to(grid, { autoAlpha: 1, duration: 0.33 }, 0)
+            .to(terrain, { strokeDashoffset: 0, duration: 0.92 }, 0.07)
+            .to(vols, { strokeDashoffset: 0, duration: 0.46, stagger: 0.18 }, ">-0.07")
+            .to(vols, { opacity: 1, duration: 0.53, stagger: 0.18, ease: "power2.out" }, "<")
+            .to(cota, { strokeDashoffset: 0, duration: 0.4, stagger: 0.05 }, ">-0.07")
+            .to(horizon, { strokeDashoffset: 0, duration: 0.4 }, ">-0.07")
+            .to(marks, { autoAlpha: 1, duration: 0.4, stagger: 0.04, ease: "power2.out" }, ">-0.07")
             // --- Elementos añadidos ---
-            .to(plats, { strokeDashoffset: 0, duration: 0.3, stagger: 0.05 }, ">-0.02")
-            .to(drop, { strokeDashoffset: 0, duration: 0.3, stagger: 0.04 }, ">-0.05")
-            .to(span, { strokeDashoffset: 0, duration: 0.28, stagger: 0.04 }, ">-0.05")
-            .to(sur, { strokeDashoffset: 0, duration: 0.25 }, ">-0.05")
-            .to(pinos, { strokeDashoffset: 0, duration: 0.3, stagger: 0.06 }, ">-0.05")
-            .to(eje, { autoAlpha: 1, duration: 0.3 }, ">-0.02")
-            .to(marks2, { autoAlpha: 1, duration: 0.3, stagger: 0.04, ease: "power2.out" }, ">-0.1");
+            .to(plats, { strokeDashoffset: 0, duration: 0.4, stagger: 0.07 }, ">-0.03")
+            .to(drop, { strokeDashoffset: 0, duration: 0.4, stagger: 0.05 }, ">-0.07")
+            .to(span, { strokeDashoffset: 0, duration: 0.37, stagger: 0.05 }, ">-0.07")
+            .to(sur, { strokeDashoffset: 0, duration: 0.33 }, ">-0.07")
+            .to(pinos, { strokeDashoffset: 0, duration: 0.4, stagger: 0.08 }, ">-0.07")
+            .to(eje, { autoAlpha: 1, duration: 0.4 }, ">-0.03")
+            .to(marks2, { autoAlpha: 1, duration: 0.4, stagger: 0.05, ease: "power2.out" }, ">-0.13");
         }
 
         // Salvaguarda: umbral alto + margen amplio para no revelar antes de que
         // el pin arranque (la sección es visible mucho antes de "top top").
         const disarm = armFailShowing(el, () => played, finalize, {
-          graceMs: mobile ? 1400 : 2400,
+          // Móvil sube a 3200 como el resto (su disparo pasó a "top 66%").
+          // Escritorio se queda en 2400: su trigger es el pin en "top top",
+          // que no se ha tocado, así que su margen ya estaba ajustado.
+          graceMs: mobile ? 3200 : 2400,
           threshold: mobile ? 0.01 : 0.15,
         });
 

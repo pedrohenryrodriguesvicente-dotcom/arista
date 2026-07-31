@@ -161,7 +161,11 @@ export default function Footer() {
             }
           }
         },
-        { threshold: 0.4 }
+        // 0,55: la firma arranca cuando ya está claramente dentro de la
+        // ventana, en línea con el retraso aplicado al resto de disparos.
+        // Sólo cambia CUÁNDO empieza; el efecto Vaporize (2 s, partículas,
+        // easing) se mantiene exactamente igual.
+        { threshold: 0.55 }
       );
       io.observe(wrap);
     } else {
